@@ -37,7 +37,7 @@ module.exports.datastores = {
   ***************************************************************************/
 	default: {
 		adapter: require('sails-mysql'),
-		 url: 'mysql://factuweb:guhsdlfjghwoieu8rGSDFH@localhost:32769/factuWeb',
+		 url: 'mysql://root:guhsdlfjghwoieu8rGSDFH@localhost:32769/factuWeb',
 		port: 32769
   	},
 
