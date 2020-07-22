@@ -13,8 +13,8 @@ const jwt = require("jsonwebtoken");
 const moment = require('moment');
 
 module.exports.bootstrap = async function () {
-	if (!fs.existsSync(process.cwd() + "/config/local.js"))
-		sails.log.error("No existe");
+	// if (!fs.existsSync(process.cwd() + "/config/local.js"))
+	// 	sails.log.error("No existe");
 	// Comprueba que existan los directorios de imagenes y , de ser necesario, los crea.
 	if (!fs.existsSync(process.cwd() + "/photos"))
 		fs.mkdirSync(process.cwd() + "/photos");
@@ -46,9 +46,15 @@ module.exports.bootstrap = async function () {
 	if (Object.keys(sails.models).includes('settings')) {
 		let secret = await Settings.findOne({ KEY: 'secret' });
 		if (!secret) {
-			let num = moment().add(Math.random(30), "days").unix();
-			secret = sails.config.custom.secret || jwt.sign({ rndnum: num }, num);
-			await Settings.create({ KEY: 'secret', VALUE: secret });
+			secret = sails.config.custom.secret;
+			if (!secret) {
+				require('crypto').randomBytes(48,async function (err, buffer) {
+					secret = buffer.toString('hex');
+					await Settings.create({ KEY: 'secret', VALUE: secret });
+				});
+			} else {
+				await Settings.create({ KEY: 'secret', VALUE: secret });
+			}
 		}
 
 		let token = await Settings.findOne({ KEY: 'token' });
@@ -59,9 +65,9 @@ module.exports.bootstrap = async function () {
 		}
 
 		let conf = await Settings.find({})
-		await Promise.all(conf.map(item => { sails.config.custom[item.KEY] = item.VALUE; sails.log.debug("CONFIG - " + item.KEY + " - " + item.VALUE )}))
-
-		sails.log.info("API token --> " + sails.config.custom.token);
+		console.log('--------------------------------------------------------------------------------');
+		await Promise.all(conf.map(item => { sails.config.custom[item.KEY] = item.VALUE; sails.log.debug("CONFIG - " + item.KEY + " - " + item.VALUE) }))
+		console.log('--------------------------------------------------------------------------------');
 
 	}
 
