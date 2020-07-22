@@ -15,6 +15,15 @@ const moment = require('moment');
 module.exports.bootstrap = async function () {
 	// if (!fs.existsSync(process.cwd() + "/config/local.js"))
 	// 	sails.log.error("No existe");
+
+	if (sails.config.models.migrate == 'drop') {
+		sails.config.models.migrate = "safe";
+		let data = "module.exports.models = " + JSON.stringify(sails.config.models, null,4);
+		fs.writeFileSync(process.cwd() + "/config/models.js", data);
+	}
+
+
+
 	// Comprueba que existan los directorios de imagenes y , de ser necesario, los crea.
 	if (!fs.existsSync(process.cwd() + "/photos"))
 		fs.mkdirSync(process.cwd() + "/photos");
