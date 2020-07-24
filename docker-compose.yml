@@ -1,0 +1,35 @@
+version: '3.5'
+services:
+    mysql:
+        container_name: DEV_factuweb_mysql_1
+        hostname: factuweb_mysql
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        ports:
+            - "3306:3306"
+            - "33060:33060"
+        networks:
+            net:
+                aliases:
+                    - factudb
+        environment:
+            MYSQL_ROOT_PASSWORD: guhsdlfjghwoieu8rGSDFH
+            MYSQL_DATABASE: factuweb
+    backend:
+        container_name: DEV_factuweb_backend_1
+        hostname: factuweb_backend
+        restart: always
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/app/factuweb-backend:rw
+        networks:
+            net:
+                aliases:
+                    - factuapi
+networks:
+    net:
+        name: factuweb_net
+        driver: bridge

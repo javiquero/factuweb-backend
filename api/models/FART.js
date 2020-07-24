@@ -74,7 +74,8 @@ module.exports = {
 			"defaultsTo": "",
 			"description": "Observaciones",
 			"allowNull": true,
-			"type": "string"
+			"type": "string",
+			"columnType": "text"
 		},
 		"DLAART": {
 			"columnName": "DLAART",
@@ -116,7 +117,8 @@ module.exports = {
 			"defaultsTo": "",
 			"description": "[E]Descripción web",
 			"allowNull": true,
-			"type": "string"
+			"type": "string",
+			"columnType": "text"
 		},
 		"IMWART": {
 			"columnName": "IMWART",
