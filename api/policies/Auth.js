@@ -10,11 +10,13 @@
 
 	module.exports = async function(req, res, next) {
 	    let ip = req.headers['x-real-ip'] || req.ip;
-	    let token = undefined;
+	    let token = req.param("token", undefined);
+		if (token != undefined) req.headers.authorization = "Bearer " + token;
+		// console.log(req.headers.authorization);
 		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 			token = req.headers.authorization.split(' ')[1];
 
-			if (token == sails.config.custom.APIToken) {
+			if (token == sails.config.custom.token) {
 				req.session.cookie.token = token;
 				sails.log.info("API FactuWebUpdater (" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
 				// sails.log.info("Params: ", JSON.stringify(req.allParams()));
@@ -22,10 +24,12 @@
 			}
 
 			TokenService.decode(token).then(data => {
-				sails.log.info("-------- Auth ---------");
-				sails.log.info("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
-				sails.log.info("Token: " + token.substring(0, 20) + "...");
-				sails.log.info("Params: ", JSON.stringify(req.allParams()));
+				if (token != sails.config.custom.token) {
+					sails.log.info("-------- Auth ---------");
+					sails.log.info("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
+					sails.log.info("Token: " + token.substring(0, 10) + "..." + token.substring(token.length - 10, token.length));
+					if (  Object.keys(req.allParams()).length != 0 && req.allParams().constructor === Object ) sails.log.info("Params: ", JSON.stringify(req.allParams()));
+				}
 				// sails.log.info("Policie/Auth",req.headers);
 				req.session.cookie = data;
 				req.session.cookie.token = token;

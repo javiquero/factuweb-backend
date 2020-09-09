@@ -17,8 +17,9 @@ module.exports.blueprints = {
   * Automatically expose implicit routes for every action in your app?       *
   *                                                                          *
   ***************************************************************************/
-     prefix: '/api',
-//  restPrefix: '/api',
+	 prefix: '/api',
+
+ 	//	restPrefix: '/api',
     actions: true,
 
   /***************************************************************************
@@ -31,7 +32,9 @@ module.exports.blueprints = {
 
 
   /***************************************************************************
-  *                                                                          *
+  *
+  *
+  *               *
   * Automatically expose CRUD "shortcut" routes to GET requests?             *
   * (These are enabled by default in development only.)                      *
   *                                                                          *
@@ -39,8 +42,8 @@ module.exports.blueprints = {
 
     shortcuts: true,
 
-    parseBlueprintOptions:  function (req) {
-        let queryOptions = req._sails.hooks.blueprints.parseBlueprintOptions(req);
+	parseBlueprintOptions: function (req) {
+		let queryOptions = req._sails.hooks.blueprints.parseBlueprintOptions(req);
         let found = false;
         for (let x = 0; x < tablesForSync.length; x++) {
             if (tablesForSync[x].name.toLowerCase().split("_").join("") == queryOptions.using) {
@@ -50,7 +53,7 @@ module.exports.blueprints = {
         }
         // tablesForSync.find(element => element.name.toLowerCase().split("_").join("") == queryOptions.using);
         if (found) {
-            if (found.client != undefined && req.session.cookie.token != sails.config.custom.APIToken) {
+            if (found.client != undefined && req.session.cookie.token != sails.config.custom.token) {
                 queryOptions.criteria.where[found.client] = req.session.cookie.client;
             }
 
@@ -73,7 +76,7 @@ module.exports.blueprints = {
             // } else {
                 return queryOptions;
             // }
-        } else {
+		} else {
             return queryOptions;
         }
     }

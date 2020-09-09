@@ -18,8 +18,13 @@ module.exports.policies = {
   ***************************************************************************/
 
 	'*': 'auth',
+	'sqlite/*': 'debug',
 	'auth/login': 'debug',
-  'image/getImage': 'debug',
-  'image/getThumb150': 'debug',
-  'image/getThumb1024': 'debug'
+  	'image/getImage': 'debug',
+  	'image/getThumb150': 'debug',
+	'image/getThumb1024': 'debug',
+	'image/getDownloadPhoto': 'debug',
+	'image/getDownloadSection': 'debug',
+	'image/getDownloadOrder': 'debug',
+
 };

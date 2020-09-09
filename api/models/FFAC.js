@@ -645,7 +645,8 @@ module.exports = {
         "columnName": "COMFAC",
         "defaultsTo": "",
         "description": "[E]COMENTARIOS PARA IMPRIMIR AL FINAL DE LAS LÍNEAS DE DETALLE",
-        "allowNull": true,
+		"allowNull": true,
+		"columnType": "text",
         "type": "string"
     },
     "USUFAC": {

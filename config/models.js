@@ -1,5 +1,5 @@
 module.exports.models = {
-    "migrate": "drop",
+    "migrate": "safe",
     "archiveModelIdentity": false,
     "attributes": {
         "createdAt": {

@@ -1,12 +1,57 @@
 
 const fs = require('fs')
 const thumb = require('node-thumbnail').thumb;
+const AdmZip = require('adm-zip');
 
 module.exports = {
 	_config: {
 		actions: false,
 		shortcuts: false,
 		rest: false
+	},
+	clear: async function (path) {
+
+		let files = fs.readdirSync(path);
+		let imgs = await Image.find();
+
+		for (i = 0; i < files.length; i++) {
+			let file = files[i];
+			let MD5 = file.split('.')[0];
+			let extension = file.split('.')[1];
+
+			const found = imgs.find(element => element.MD5 == MD5);
+			if (found == undefined) {
+				fs.unlink(path + file, (err) => {
+					if (err) {
+					  console.error(err)
+					  return
+					}
+					sails.log.debug("Image " + file + " has been removed.");
+					//file removed
+				  })
+			}
+			// await Promise.all(files.map( f => f.MD5==MD5 ));
+			// Image.find({ "MD5": MD5 }).then(images => {
+			// 	if (images.length < 1) {
+			// 		fs.unlink(path + file, (err) => {
+			// 			if (err) {
+			// 			  console.error(err)
+			// 			  return
+			// 			}
+			// 			sails.log.debug("Image " + file + " has been removed.");
+			// 			//file removed
+			// 		  })
+
+			// 		// try {
+			// 		// 	fs.unlinkSync(path + file);
+			// 		// 	sails.log.debug("Image " + file + " has been removed.");
+			// 		// } catch (err) {
+			// 		// 	console.error(err)
+			// 		// }
+			// 	}
+			// })
+			// do things with file
+		}
 	},
 	exists: async function (req, res) {
 		let codart = req.param("codart", undefined);
@@ -27,6 +72,7 @@ module.exports = {
 				return res.ok();
 			}
 		} else {
+			await Image.destroy({ "CODART": codart });
 			return res.json({});
 		}
 	},
@@ -96,7 +142,6 @@ module.exports = {
 		let codart = req.param("codart", undefined);
 		if (!codart) return res.badRequest();
 
-
 		let images = await Image.find({ "CODART": codart })
 		if (images && images.length > 0) {
 			let md5 = images[0].MD5;
@@ -165,11 +210,71 @@ module.exports = {
 		}
 	},
 
-	getDownloadPhoto: function (req, res) {
-
+	getDownloadPhoto: async function (req, res) {
+		let codart = req.param("codart", undefined);
+		let images = await Image.find({ "CODART": codart  });
+		if (images.length > 0) {
+			let image = images[0];
+			if (fs.existsSync(process.cwd() + "/photos/" + image.MD5 + "." + image.extension)) {
+				return res.download(process.cwd() + "/photos/" + image.MD5 + "." + image.extension, codart + "." + image.extension);
+			}
+		} else {
+			// sails.log.error(images);
+			return res.notFound();
+		}
 	},
-	getDownloadSection: function (req, res) {
+	getDownloadSection: async function (req, res) {
+		let codfam = req.param("codfam", undefined);
+		let zip = new AdmZip();
+		let section = "Section_images"
+		let FAM = await FFAM.find({ "CODFAM": codfam });
+		if (FAM.length > 0) {
+			section = FAM[0].DESFAM.split(' ').join('_');//.substring(0, 7);
+			section.charAt(0).toUpperCase() + section.toLocaleLowerCase().slice(1);
+		} else {
+			return res.notFound();
+		}
+		let Items = await FART.find({ "FAMART": codfam });
+		if (Items.length > 0) {
+			await Promise.all(Items.map(async item => {
+				let images = await Image.find({ "CODART": item.CODART });
+				if (images.length > 0) {
+					let img = images[0];
+					if (fs.existsSync(process.cwd() + "/photos/" + img.MD5 + "." + img.extension)) {
+						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  item.CODART + "." + img.extension );
+					}
+				}
+			}));
+			res.setHeader('Content-disposition', 'attachment; filename=' + section + ".zip");
+			return res.send(zip.toBuffer());
+		} else {
+			return res.notFound();
+		}
+	},
 
+	getDownloadOrder: async function (req, res) {
+		let tippcl = req.param("tippcl", undefined);
+		let codpcl = req.param("codpcl", undefined);
+		let year = req.param("year", undefined);
+		let zip = new AdmZip();
+		let filename = "Order_" + year + "_" + tippcl + "_" + codpcl + "_images"
+
+		let Items = await FLPC.find({ "YEAR": year, "TIPLPC": tiplpc, "CODLPC": codpcl });
+		if (Items.length > 0) {
+			await Promise.all(Items.map(async item => {
+				let images = await Image.find({ "CODART": item.ARTLPC });
+				if (images.length > 0) {
+					let img = images[0];
+					if (fs.existsSync(process.cwd() + "/photos/" + img.MD5 + "." + img.extension)) {
+						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  item.ARTLPC + "." + img.extension );
+					}
+				}
+			}));
+			res.setHeader('Content-disposition', 'attachment; filename=' + filename + ".zip");
+			return res.send(zip.toBuffer());
+		} else {
+			return res.notFound();
+		}
 	}
 
 }

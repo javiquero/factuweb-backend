@@ -86,7 +86,7 @@ let FARTController = {
 
 		let where = req.param("where", req.allParams());
 
-		let limit = req.param("limit", 1000);
+		let limit = req.param("limit", 10000);
 		let sort = req.param("sort", 'id');
 		let skip = req.param("skip", 0);
 
@@ -98,7 +98,7 @@ let FARTController = {
 
 		let arts = await FART.find(where).limit(limit).sort(sort).skip(skip);
 
-		if (req.session.cookie.token == sails.config.custom.APIToken) {
+		if (req.session.cookie.token == sails.config.custom.token) {
 			return res.send(arts);
 		 } else {
 			if (req.session.cookie.client != undefined) {

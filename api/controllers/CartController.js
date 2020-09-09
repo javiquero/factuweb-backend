@@ -9,9 +9,13 @@ let cartController = {
 	},
 	_getCart: async function  (codcli){
 		return new Promise(async (resolve) =>{
-			_cart = await Cart.find({ CODCLI: codcli });
-			if (_cart && _cart.length > 0) return resolve({ items: _cart[0].items });
-			return resolve(cartController._emptyCart())
+			try {
+				_cart = await Cart.find({ CODCLI: codcli });
+				if (_cart && _cart.length > 0) return resolve({ items: _cart[0].items });
+				return resolve(cartController._emptyCart())
+			} catch (error) {
+				return resolve(cartController._emptyCart())
+			}
 		});
 	},
 	_itemInCart(_cart, codart, type=0) {
@@ -42,19 +46,19 @@ let cartController = {
 
 		let foundIndex = await cartController._itemInCart(_cart, item.CODART, item.type || 0);
 		if ( foundIndex > -1) {
-			if (qty > 1) {
+			if (qty > 0) {
 				// UPDATE ELEMENT
-				// sails.log.debug("UPDATE");
+				 sails.log.debug("ITEM CART UPDATE");
 				_cart.items[foundIndex].qty = qty;
 			} else {
 				// REMOVE ELEMENT QTY=0
-				// sails.log.debug("REMOVE");
+				sails.log.debug("ITEM CART REMOVE", qty);
 				_cart.items.splice(foundIndex, 1);
 			}
 		} else {
 			//INSERT ELEMENT
 			if (qty > 0) {
-				// sails.log.debug("INSERT");
+				sails.log.debug("ITEM CART INSERT");
 				item.qty = qty;
 				_cart.items.push(item);
 			}

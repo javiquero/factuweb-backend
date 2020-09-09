@@ -537,7 +537,8 @@ module.exports = {
         "columnName": "COMPCL",
         "defaultsTo": "",
         "description": "[E]COMENTARIOS DESPUES DE LÍNEAS DE DETALLE",
-        "allowNull": true,
+		"allowNull": true,
+		"columnType": "text",
         "type": "string"
     },
     "USUPCL": {

@@ -29,32 +29,38 @@ module.exports.routes = {
 
 
     "post /api/auth/login": "AuthController.login",
-	"post /api/auth/relogin": "AuthController.relogin",
+    "post /api/auth/relogin": "AuthController.relogin",
 
     "get /api/models/:model/destroy": "ModelsController.destroyModel",
     "get /api/models/destroy": "ModelsController.destroyAll",
-	"get /api/models/list": "ModelsController.getModelsForImport",
-	"post /api/db/upload": "ModelsController.uploadSQLITE",
+    "get /api/models/list": "ModelsController.getModelsForImport",
+    "post /api/db/upload": "ModelsController.uploadSQLITE",
 
 
 
-	"post /api/image/upload/:codart": "ImageController.upload",
-	"get /api/image/upload/exists": "ImageController.exists",
+    "post /api/image/upload/:codart": "ImageController.upload",
+    "get /api/image/upload/exists": "ImageController.exists",
     "get /api/image/:codart": "ImageController.getImage",
-	"get /api/image/150/:codart": "ImageController.getThumb150",
-	"get /api/image/1024/:codart": "ImageController.getThumb1024",
-	"get /api/image/download/section/:codfam": "ImageController.getDownloadSection",
-	"get /api/image/download/photo/:codfam": "ImageController.getDownloadPhoto",
+    "get /api/image/150/:codart": "ImageController.getThumb150",
+    "get /api/image/1024/:codart": "ImageController.getThumb1024",
+    "get /api/image/download/section/:codfam": "ImageController.getDownloadSection",
+    "get /api/image/download/photo/:codart": "ImageController.getDownloadPhoto",
+	"get /api/image/download/order/:year/:tiplpc/:codlpc": "ImageController.getDownloadOrder",
 
 
 
-	"get /api/cart": "CartController.getCart",
-	// "post /api/cart/add": "CartController.addCart",
-	"post /api/cart/set": "CartController.setCart",
-	"post /api/cart/del": "CartController.delCart",
-	// "post /api/cart/edit": "CartController.editCart",
 
-    /***************************************************************************
+    "get /api/cart": "CartController.getCart",
+    // "post /api/cart/add": "CartController.addCart",
+    "post /api/cart/set": "CartController.setCart",
+    "post /api/cart/del": "CartController.delCart",
+    // "post /api/cart/edit": "CartController.editCart",
+
+	"get /api/catalog": "SqliteController.getCatalog",
+	"get /api/catalog/:CODFAM": "SqliteController.getItemsFamily",
+
+
+    	/***************************************************************************
         *                                                                          *
         * More custom routes here...                                               *
         * (See https://sailsjs.com/config/routes for examples.)                    *

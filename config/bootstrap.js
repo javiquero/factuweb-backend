@@ -51,13 +51,18 @@ module.exports.bootstrap = async function () {
 			}
 		});
 
+	// Elimina las imagenes que no existan en la base de datos.
+	require("../api/controllers/ImageController").clear(process.cwd() + "/photos/");
+	require("../api/controllers/ImageController").clear(process.cwd() + "/thumbs/1024/");
+	require("../api/controllers/ImageController").clear(process.cwd() + "/thumbs/150/");
+
 	// Configuración
 	if (Object.keys(sails.models).includes('settings')) {
 		let secret = await Settings.findOne({ KEY: 'secret' });
 		if (!secret) {
 			secret = sails.config.custom.secret;
 			if (!secret) {
-				require('crypto').randomBytes(48,async function (err, buffer) {
+				require('crypto').randomBytes(48, async function (err, buffer) {
 					secret = buffer.toString('hex');
 					await Settings.create({ KEY: 'secret', VALUE: secret });
 				});
@@ -77,26 +82,12 @@ module.exports.bootstrap = async function () {
 		console.log('--------------------------------------------------------------------------------');
 		await Promise.all(conf.map(item => { sails.config.custom[item.KEY] = item.VALUE; sails.log.debug("CONFIG - " + item.KEY + " - " + item.VALUE) }))
 		console.log('--------------------------------------------------------------------------------');
-
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (process.argv.length>3 && process.argv[2]=='restore')
+	// sails.log.debug(process.argv);
+	if (process.argv.includes('restore'))
 	if (process.env.NODE_ENV != 'production') {
-		if (fs.existsSync(process.cwd() + "/db.sqlite")) {
+		if (fs.existsSync(process.cwd() + "/db.zip")) {
 			console.log('--------------------------------------------------------------------------------');
 			console.log("Ok!,  Se procederá a importar todos los datos.\n");
 			require("../api/controllers/ModelsController").updateFromSQLITE(true);
