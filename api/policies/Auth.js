@@ -12,7 +12,10 @@
 	    let ip = req.headers['x-real-ip'] || req.ip;
 	    let token = req.param("token", undefined);
 		if (token != undefined) req.headers.authorization = "Bearer " + token;
-		// console.log(req.headers.authorization);
+		// console.log(req.cookies);
+		if (req.cookies["fw-token"] != undefined) req.headers.authorization = "Bearer " + req.cookies["fw-token"];
+
+
 		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 			token = req.headers.authorization.split(' ')[1];
 
@@ -44,11 +47,11 @@
 		} else {
 			sails.log.error("-------- NO Auth ---------");
 			sails.log.error("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
-
 			sails.log.error("Policie/Auth",req.headers);
 			return res.forbidden();
 		}
 	}
+
 
 
 	//module.exports = async function(req, res, next) {

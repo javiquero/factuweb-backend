@@ -1,0 +1,64 @@
+<div class="invoice-info">
+	<div class="row">
+		<div class="col-1">
+			&nbsp;
+			<br>
+			<div class="blue">PAGO</div>
+			<div class="blue">BANCO</div>
+			<div class="blue">AGENCIA</div>
+			<div class="blue">Nº.CTA.</div>
+		</div>
+		<% if (page!=totalPages) { %>
+			<div class="col-4">
+				&nbsp;
+			</div>
+			<%} else {%>
+				<div class="col-4">
+					&nbsp;
+					<br>
+					<div>
+						<%=invoice.DESFPA%>&nbsp;
+					</div>
+					<div>
+						<%=invoice.BANCLI%>&nbsp;
+					</div>
+					<div>&nbsp;</div>
+					<div>
+						<%=invoice.BIBFAC%>&nbsp;
+					</div>
+				</div>
+				<% } %>
+					<div class="col-2">
+						<div class="blue">VENCIMIENTOS</div>
+						<% if (page==totalPages && invoice.VENFAC) {
+							let vencimientos = invoice.VENFAC.split(';');
+							for (var i = 0; i<vencimientos.length; i++){ %>
+							<% let venc = vencimientos[i]; %>
+
+								<% if(i%2==0){%>
+									<span>
+										<%=venc %>
+									</span>
+									<%}%>
+
+										<%}%>
+											<%}%>
+					</div>
+					<div class="col-2">
+						<div class="blue">IMPORTES</div>
+						<% if (page==totalPages && invoice.VENFAC) {
+							let vencimientos = invoice.VENFAC.split(';');
+							for (var i = 0; i<vencimientos.length; i++){ %>
+							<% let imp = vencimientos[i]; %>
+								<% if(i%2!=0){%>
+									<span>
+										<%=parseFloat(imp.replace(",",".")).toString().replace(".",",") %>
+									</span>
+									<%}%>
+										<%}%>
+											<%}%>
+					</div>
+					<div class="col-3">
+					</div>
+	</div>
+</div>

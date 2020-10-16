@@ -26,7 +26,6 @@ function AsyncForEach(array, fn, callback) {
 	}
 }
 
-
 async function start() {
 	let files = fs.readdirSync(process.cwd() + "/photos/");
 

@@ -18,7 +18,6 @@ module.exports.policies = {
   ***************************************************************************/
 
 	'*': 'auth',
-	'sqlite/*': 'debug',
 	'auth/login': 'debug',
   	'image/getImage': 'debug',
   	'image/getThumb150': 'debug',

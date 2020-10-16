@@ -19,14 +19,28 @@ module.exports.custom = {
 		name: "F_ART",
 		cols: ["CODART", "EQUART", "FAMART", "DESART", "TIVART", "UELART", "UPPART", "DIMART", "OBSART", "DLAART", "IPUART", "CANART", "IMGART", "SUWART", "DSCART", "DEWART", "IMWART", "PESART", "UMEART", "DE1ART", "DE2ART", "DE3ART", "DFIART", "EANART", "ORDART"],
 		index: ["CODART"]
-    }, {
+	}, {
+		name: "F_FPA",
+		cols:["CODFPA", "DESFPA"],
+		index: ["CODFPA"]
+	}, {
 		name: "F_TAR",
 		cols:["CODTAR", "DESTAR"],
 		index: ["CODTAR"]
     }, {
 		name: "F_LTA",
 		index: ["TARLTA", "ARTLTA"]
-	},{
+	}, {
+		name: "F_ARC",
+		index: ["ARTARC", "CE1ARC"]
+		}, {
+
+		name: "F_CE1",
+		index: ["CODCE1", "DESCE1"]
+	}, {
+		name: "F_IMG",
+		index: ["CODIMG", "ARTIMG", "IMGIMG", "SUWIMG", "FAMIMG", "ORDIMG", "CE1IMG"]
+	}, {
 		name: "F_SEC",
 		cols: ["CODSEC", "DESSEC", "SUWSEC", "IMASEC", "ORDSEC"],
 		index: ["CODSEC"]
@@ -61,7 +75,7 @@ module.exports.custom = {
 		index: ["TIPPCL","CODPCL"],
 		byYears: 1,
 		client: "CLIPCL"
-    }, {
+	}, {
 		name: "F_LPC",
 		cols:["TIPLPC", "CODLPC","POSLPC","ARTLPC", "DESLPC", "CANLPC", "DT1LPC", "DT2LPC", "DT3LPC", "PRELPC", "TOTLPC", "PENLPC", "IVALPC", "DOCLPC", "DTPLPC", "DCOLPC", "MEMLPC", "PIVLPC", "TIVLPC", "CE1LPC", "CE2LPC", "IMALPC", "SUMLPC", "ANULPC"],
 		index: ["TIPLPC", "CODLPC", "POSLPC"],

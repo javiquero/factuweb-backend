@@ -10,7 +10,8 @@
 
 module.exports = async function(req, res, next) {
     let ip = req.headers['x-real-ip'] || req.ip;
-    let token = undefined;
+	let token = undefined;
+	// sails.log.info("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		token = req.headers.authorization.split(' ')[1];
 		if (token == sails.config.custom.token) {
@@ -20,10 +21,10 @@ module.exports = async function(req, res, next) {
 		} else {
 			TokenService.decode(token).then(data => {
 				// if (token != sails.config.custom.token) {
-				// 	sails.log.info("-------- Auth ---------");
-				// 	sails.log.info("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
-				// 	sails.log.info("Token: " + token.substring(0, 10) + "..." + token.substring(token.length - 10, token.length));
-				// 	if (  Object.keys(req.allParams()).length != 0 && req.allParams().constructor === Object ) sails.log.info("Params: ", JSON.stringify(req.allParams()));
+					// sails.log.info("-------- Auth ---------");
+					// sails.log.info("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
+					// sails.log.info("Token: " + token.substring(0, 10) + "..." + token.substring(token.length - 10, token.length));
+					// if (  Object.keys(req.allParams()).length != 0 && req.allParams().constructor === Object ) sails.log.info("Params: ", JSON.stringify(req.allParams()));
 				// }
 				req.session.cookie = data;
 				req.session.cookie.token = token;
