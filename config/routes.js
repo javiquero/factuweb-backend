@@ -31,10 +31,15 @@ module.exports.routes = {
     "post /api/auth/login": "AuthController.login",
     "post /api/auth/relogin": "AuthController.relogin",
 
-    "get /api/models/:model/destroy": "ModelsController.destroyModel",
-    "get /api/models/destroy": "ModelsController.destroyAll",
+    // "get /api/models/:model/destroy": "ModelsController.destroyModel",
+    // "get /api/models/destroy": "ModelsController.destroyAll",
     "get /api/models/list": "ModelsController.getModelsForImport",
-    "post /api/db/upload": "ModelsController.uploadSQLITE",
+    // "get /api/models/": "ModelsController.getModelsForImport",
+	"post /api/db/upload": 	"ModelsController.uploadSQLITE",
+	"post /api/db/photos": 	"ModelsController.photosJson",
+	"post /api/db/add": 	"ModelsController.insertOrReplace",
+	"post /api/db/run": 	"ModelsController.create",
+	"post /api/db/del": 	"ModelsController.delete",
 
 
 
@@ -45,7 +50,11 @@ module.exports.routes = {
     "get /api/image/1024/:codart": "ImageController.getThumb1024",
     "get /api/image/download/section/:codfam": "ImageController.getDownloadSection",
     "get /api/image/download/photo/:codart": "ImageController.getDownloadPhoto",
-	"get /api/image/download/order/:year/:tiplpc/:codlpc": "ImageController.getDownloadOrder",
+	"get /api/image/download/order/:year/:tippcl/:codpcl": "ImageController.getDownloadOrder",
+	"get /api/image/download/invoice/:year/:tipfac/:codfac": "ImageController.getDownloadInvoice",
+	"get /api/image/download/products": "ImageController.getDownloadPurchasedItems",
+	"get /api/image/download/cart": "ImageController.getDownloadCart",
+	"get /api/image/download/search": "ImageController.getDownloadSearchItems",
 
 
 
@@ -56,8 +65,21 @@ module.exports.routes = {
     "post /api/cart/del": "CartController.delCart",
     // "post /api/cart/edit": "CartController.editCart",
 
-	"get /api/catalog": "SqliteController.getCatalog",
-	"get /api/catalog/:CODFAM": "SqliteController.getItemsFamily",
+	"get /api/catalog": 				"CatalogController.getCatalog",
+	"get /api/catalog/:CODFAM": "CatalogController.getItemsFamily",
+
+	"get /api/orders/list/:LIMIT": "OrderController.getListOrders",
+	"get /api/order/:YEAR/:TIPPCL/:CODPCL": 	"OrderController.getOrder",
+
+	"get /api/invoices/list/:LIMIT": 	"InvoiceController.getListInvoices",
+	"get /api/invoice/:YEAR/:TIPFAC/:CODFAC": 	"InvoiceController.getInvoice",
+	"get /api/invoice/pdf/:YEAR/:TIPFAC/:CODFAC": 	"InvoiceController.getPdfInvoice",
+
+	"get /api/products/list": "ProductController.getPurchasedItems",
+	"post /api/products/search": 	"ProductController.getSearchResults",
+
+	"get /api/client/addresses": 	"ClientController.getAddresses",
+	"get /api/client/agent": 	"ClientController.getAgentInfo",
 
 
     	/***************************************************************************

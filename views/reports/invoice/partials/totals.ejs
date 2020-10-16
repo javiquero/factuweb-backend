@@ -1,0 +1,130 @@
+<div class="invoice-footer">
+	<div class="invoice-footer-head">
+		<div class="row">
+			<div class="col">
+				IMPORTE BRUTO
+			</div>
+			<div class="col">
+				<span class="caption-percent">
+					%
+				</span>
+				<span class="text-center multiline">
+					DTO.P.PAGO
+					<br>IMPORTE
+				</span>
+			</div>
+			<div class="col">
+				BASE IMPONIBLE
+			</div>
+			<div class="col">
+				<span class="caption-percent">
+					%
+				</span>
+				<span class="text-center multiline">
+					IMPORTE
+					<br>IVA
+				</span>
+			</div>
+			<div class="col">
+				<span class="caption-percent">
+					%
+				</span>
+				<span class="text-center multiline">
+					REC.EQUIVALENCIA IMPORTE
+				</span>
+			</div>
+			<div class="col">
+				TOTAL
+			</div>
+		</div>
+	</div>
+	<div class="invoice-footer-content">
+		<div class="row">
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span style="display:block">
+						<% let neto = invoice.NET1FAC + invoice.NET2FAC + invoice.NET3FAC + invoice.NET4FAC;%>
+							<% neto = (neto / 1).toFixed(2).toString().replace(".",","); %>
+								<%=neto  %>
+					</span>
+					<% } %>
+			</div>
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span class="caption-percent">
+						<%=invoice.PPPA1FAC !='0'? invoice.PPPA1FAC : ''%>
+					</span>
+					<span class="text-center ">
+						<% let ImpDtoPP = (invoice.IPPA1FAC / 1).toFixed(2).toString().replace(".",","); %>
+							<%=ImpDtoPP!="0,00"?ImpDtoPP:''  %>
+					</span>
+					<% } %>
+			</div>
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span class="text-center <%=invoice.IIVA2FAC>0?'multiline':''%>">
+						<%=(invoice.BAS1FAC / 1).toFixed(2).toString().replace(".",",")%>
+							<% if (invoice.IIVA2FAC>0){%>
+								<p>
+									<br>
+									<%=(invoice.BAS2FAC / 1).toFixed(2).toString().replace(".",",")%>
+								</p>
+							<%}%>
+					</span>
+
+					<% } %>
+			</div>
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span class="caption-percent <%=invoice.IIVA2FAC>0?'caption-percent-multiline':''%> ">
+						<%=invoice.PIVA1FAC%>
+							<% if (invoice.IIVA2FAC > 0){%>
+								<p style="display: contents;">
+									<br>
+									<%=invoice.PIVA2FAC%>
+								</p>
+								<%}%>
+					</span>
+					<span class="text-center <%=invoice.IIVA2FAC>0?'multiline':''%>">
+						<%=(invoice.IIVA1FAC / 1).toFixed(2).toString().replace(".",",")%>
+							<% if (invoice.IIVA2FAC>0){%>
+								<p>
+									<br>
+									<%=(invoice.IIVA2FAC / 1).toFixed(2).toString().replace(".",",")%>
+								</p>
+								<%}%>
+					</span>
+					<% } %>
+			</div>
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span class="caption-percent <%=invoice.IREC2FAC>0?'caption-percent-multiline':''%>">
+						<%=invoice.PREC1FAC.toString().replace(".",",")%>
+							<% if (invoice.IREC2FAC>0){%>
+								<p style="display: contents;">
+									<br>
+									<%=invoice.PREC2FAC.toString().replace(".",",")%>
+								</p>
+								<%}%>
+					</span>
+					<span class="text-center <%=invoice.IREC2FAC>0?'multiline':''%>">
+						<%=(invoice.IREC1FAC / 1).toFixed(2).toString().replace(".",",")%>
+							<% if (invoice.IREC2FAC>0){%>
+								<p>
+									<br>
+									<%=(invoice.IREC2FAC / 1).toFixed(2).toString().replace(".",",")%>
+								</p>
+								<%}%>
+					</span>
+					<% } %>
+			</div>
+			<div class="col">
+				<% if (page==totalPages){%>
+					<span class="text-center" style="display:block">
+						<%=(invoice.TOTFAC / 1).toFixed(2).toString().replace(".",",")%>
+					</span>
+					<% } %>
+			</div>
+		</div>
+	</div>
+</div>

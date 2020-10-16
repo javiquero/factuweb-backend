@@ -1,3 +1,5 @@
+const Data = require("../services/Data");
+
 let cartController = {
 	_config: {
 		actions: false,
@@ -10,8 +12,8 @@ let cartController = {
 	_getCart: async function  (codcli){
 		return new Promise(async (resolve) =>{
 			try {
-				_cart = await Cart.find({ CODCLI: codcli });
-				if (_cart && _cart.length > 0) return resolve({ items: _cart[0].items });
+				_cart = await Data.find("SELECT * from cart WHERE CODCLI=?;", [codcli]);
+				if (_cart && _cart.length > 0) return resolve({ items: JSON.parse(_cart[0].items) });
 				return resolve(cartController._emptyCart())
 			} catch (error) {
 				return resolve(cartController._emptyCart())
@@ -20,12 +22,12 @@ let cartController = {
 	},
 	_itemInCart(_cart, codart, type=0) {
 		return new Promise((resolve) => {
-			for (const [index, element] of _cart.items.entries()) {
-				if (element.CODART == codart && element.type == type) return resolve( index );
-			}
-			return resolve( -1 )
-			// let found = _cart.items.findIndex(element => (element.CODART == codart && element.type == type));
-			// return resolve( found )
+			// for (const [index, element] of _cart.items.entries()) {
+			// 	if (element.CODART == codart && element.type == type) return resolve( index );
+			// }
+			// return resolve( -1 )
+			let found = _cart.items.findIndex(element => (element.CODART == codart && element.type == type));
+			return resolve( found )
 		});
 	},
 	getCart: async (req, res)=> {
@@ -39,6 +41,7 @@ let cartController = {
 		if (!req.session.cookie.token) return res.notFound();
 
 		let item = req.param("item", undefined);
+		let add = req.param("add", undefined);
 		let qty = req.param("qty", 0);
 
 		if (!item) return res.badRequest();
@@ -48,23 +51,31 @@ let cartController = {
 		if ( foundIndex > -1) {
 			if (qty > 0) {
 				// UPDATE ELEMENT
-				 sails.log.debug("ITEM CART UPDATE");
-				_cart.items[foundIndex].qty = qty;
+				// sails.log.debug("ITEM CART UPDATE");
+				if (add != undefined) {
+					_cart.items[foundIndex].qty += qty;
+				} else {
+					_cart.items[foundIndex].qty = qty;
+				}
 			} else {
 				// REMOVE ELEMENT QTY=0
-				sails.log.debug("ITEM CART REMOVE", qty);
+				// sails.log.debug("ITEM CART REMOVE", qty);
 				_cart.items.splice(foundIndex, 1);
 			}
 		} else {
 			//INSERT ELEMENT
 			if (qty > 0) {
-				sails.log.debug("ITEM CART INSERT");
+				// sails.log.debug("ITEM CART INSERT");
 				item.qty = qty;
 				_cart.items.push(item);
 			}
 		}
-		await Cart.destroy({ CODCLI: req.session.cookie.client });
-		await Cart.create({ CODCLI: req.session.cookie.client, items: _cart.items });
+		// await Data.execute("DELETE FROM cart WHERE CODCLI=?", [req.session.cookie.client])
+		// await Cart.destroy({ CODCLI: req.session.cookie.client });
+		// await Data.execute("INSERT INTO cart (CODCLI, items) VALUES (?,?)", [req.session.cookie.client, JSON.stringify(_cart.items)])
+
+		await Data.execute("REPLACE INTO cart (CODCLI, items) VALUES (?,?)", [req.session.cookie.client, JSON.stringify(_cart.items)])
+		// await Cart.create({ CODCLI: req.session.cookie.client, items: _cart.items });
 		return res.json(_cart);
 	},
 
@@ -81,4 +92,7 @@ let cartController = {
 
 
 }
-module.exports = cartController;
+
+if (!sails.controllers) sails.controllers = {};
+sails.controllers.cart = cartController;
+module.exports = cartController

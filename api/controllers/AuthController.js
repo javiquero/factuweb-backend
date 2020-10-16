@@ -11,19 +11,15 @@ module.exports = {
 		shortcuts: false,
 		rest: false
 	},
-    login(req, res) {
+   async login(req, res) {
         let client = req.param("client", undefined);
         let nif = req.param("nif", undefined);
 
         if (!client || !nif)
             return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
 
-        FCLI.findOne({
-            CODCLI: client
-        }).then(c => {
+			c = await Db.findOne("SELECT * FROM F_CLI WHERE CODCLI="+client+";")
             if (!c) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
-            let patt = new RegExp(/^[A-Za-z0-9\s]+$/g);
-
             if (c["NIFCLI"].replace(/[^A-Za-z0-9\s]+/, '').toLowerCase() != nif.replace(/[^A-Za-z0-9\s]+/, '').toLowerCase()) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
 
             TokenService.create(c.CODCLI).then(token => {
@@ -40,7 +36,7 @@ module.exports = {
                 return res.status(500).send("Internal server error");
             })
 
-        })
+
     },
 	relogin(req, res) {
 		if (!req.session.cookie.token) return res.forbidden();

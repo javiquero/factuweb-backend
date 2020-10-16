@@ -1,0 +1,329 @@
+<html>
+
+<head>
+	<link rel="stylesheet" href="http://10.0.0.6:1337/bootstrap.min.css" type="text/css">
+	<style>
+		.page {
+			padding: 25px;
+			text-align: left;
+			background-color: white;
+			font-size: 12px;
+			margin-bottom: 10px;
+		}
+
+		.page * {
+			// font-family: helvetica;
+			font-weight: lighter;
+			letter-spacing: 0.2px;
+		}
+
+		.page .letterhead {
+			color: #1d1d4e;
+			font-size: 16px;
+		}
+
+		.page .letterhead .d-dorex {
+			margin-top: 15px;
+			float: right;
+		}
+
+		.page .letterhead .info-company {
+			font-size: 9px;
+			line-height: 12px;
+		}
+
+		.page .invoice-head {
+			margin-top: 20px;
+		}
+
+		.page .invoice-head .info-client {
+			color: black;
+			line-height: 20px;
+		}
+
+		.page .invoice-head .table-head {
+			color: #2c2d79;
+			font-size: 9px;
+			text-align: center;
+			height: 23px;
+			line-height: 23px;
+			margin: 0px;
+		}
+
+		.page .invoice-head .table-head div {
+			max-width: 92px;
+			padding: 0px;
+			line-height: 20px;
+			border: solid 1px #1d1d4e;
+			border-right: none;
+			background-color: #c4c4cf;
+		}
+
+		.page .invoice-head .table-head div:first-child {
+			border-radius: 6px 0px 0px 0px;
+		}
+
+		.page .invoice-head .table-head div:last-child {
+			border-radius: 0px 6px 0px 0px;
+			border-right: solid 1px #1d1d4e;
+		}
+
+		.page .invoice-head .table-body {
+			border-top: none;
+			height: 27px;
+			text-align: center;
+			vertical-align: middle;
+			line-height: 25px;
+			font-size: 12px;
+			background-color: white;
+			color: black;
+			margin: 0px;
+		}
+
+		.page .invoice-head .table-body div {
+			max-width: 92px;
+			padding: 0px;
+			border-left: solid 1px #1d1d4e;
+			border-bottom: solid 1px #1d1d4e;
+			background-color: #fff;
+		}
+
+		.page .invoice-head .table-body div:first-child {
+			border-radius: 0.5px 0.5px 0.5px 6px;
+		}
+
+		.page .invoice-head .table-body div:last-child {
+			border-radius: 0.5px 0.5px 6px 0.5px;
+			border-right: solid 1px #1d1d4e;
+		}
+
+		.page .body {
+			margin-top: 20px;
+		}
+
+		.page .body .lines .lines-head {
+			color: #2c2d79;
+			font-size: 9px;
+			text-align: center;
+			height: 23px;
+			line-height: 23px;
+		}
+
+		.page .body .lines .lines-head .row {
+			margin: 0px;
+		}
+
+		.page .body .lines .lines-head .row div {
+			padding: 0px;
+			border-left: solid 1px #1d1d4e;
+			border-top: solid 1px #1d1d4e;
+			background-color: #c4c4cf;
+		}
+
+		.page .body .lines .row div.col-small {
+			width: 12%
+		}
+
+		.page .body .lines .row div.col-large {
+			width: 52%; // max-width: 71px;
+		}
+
+		.page .body .lines .lines-head .row div:first-child {
+			border-radius: 6px 0.5px 0.5px 0.5px;
+		}
+
+		.page .body .lines .lines-head .row div:last-child {
+			border-radius: 0.5px 6px 0.5px 0.5px;
+			border-right: solid 1px #1d1d4e;
+		}
+
+		.page .body .lines .lines-body {
+			font-size: 11px;
+			color: black;
+		}
+
+		.page .body .lines .lines-body .row {
+			margin: 0px;
+			height: 23px;
+			line-height: 23px;
+		}
+
+		.page .body .lines .lines-body .row div {
+			padding: 0px 10px 0px 10px;
+			border-left: solid 1px #1d1d4e;
+			background-color: #fff;
+		}
+
+		.page .body .lines .lines-body .row div.col-2 {
+			max-width: 71px;
+		}
+
+		.page .body .lines .lines-body .row div:last-child {
+			background-color: #c4c4cf;
+			border-right: solid 1px #1d1d4e;
+		}
+
+		.page .body .lines .lines-body .row:last-child div {
+			border-bottom: solid 1px #1d1d4e;
+		}
+
+		.page .body .lines .lines-body .row:last-child div:first-child {
+			border-radius: 0.5px 0.5px 0.5px 6px;
+		}
+
+		.page .body .lines .lines-body .row:last-child div:last-child {
+			border-radius: 0.5px 0.5px 6px 0.5px;
+		}
+
+		.page .body .lines .lines-footer {
+			font-size: 8px;
+			color: #2c2d79;
+			text-align: center;
+		}
+
+		.page .invoice-footer {
+			font-size: 8px;
+			text-align: center;
+			margin-top: 10px;
+		}
+
+		.page .invoice-footer .row {
+			height: 23px;
+			line-height: 23px;
+			margin: 0px;
+		}
+
+		.page .invoice-footer .row div {
+			border: solid 1px #1d1d4e;
+			border-right: none;
+		}
+
+		.page .invoice-footer .row div span {
+			display: flex;
+		}
+
+		.page .invoice-footer .row div .caption-percent {
+			display: block;
+			width: 19%;
+			float: left;
+		}
+
+		.page .invoice-footer .row div .multiline {
+			display: inline-block;
+			line-height: 10px;
+			height: 10px;
+			width: 80%;
+		}
+
+		.page .invoice-footer .row div:last-child {
+			border-right: solid 1px #1d1d4e;
+		}
+
+		.page .invoice-footer .invoice-footer-content {
+			color: black;
+			font-size: 10px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div {
+			background-color: #fff;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div .caption-percent-multiline {
+			height: 10px;
+			line-height: 10px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div .caption-percent-multiline p {
+			margin-top: -9px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div .multiline p {
+			margin-top: -9px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div:first-child {
+			border-radius: 0.5px 0.5px 0.5px 6px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div:nth-child(5) {
+			border-radius: 0.5px 0.5px 6px 0.5px;
+		}
+
+		.page .invoice-footer .invoice-footer-content .row div:last-child {
+			background-color: #c4c4cf;
+			border-radius: 0.5px 0.5px 6px 6px;
+		}
+
+		.page .invoice-footer .invoice-footer-head {
+			color: #2c2d79;
+		}
+
+		.page .invoice-footer .invoice-footer-head .row div {
+			border-bottom: none;
+			background-color: #c4c4cf;
+		}
+
+		.page .invoice-footer .invoice-footer-head .row div:first-child {
+			border-radius: 6px 0.5px 0.5px 0.5px;
+		}
+
+		.page .invoice-footer .invoice-footer-head .row div:nth-child(5) {
+			border-radius: 0.5px 6px 0.5px 0.5px;
+		}
+
+		.page .invoice-footer .invoice-footer-head .row div:last-child {
+			background-color: #fff;
+			border-radius: 6px 6px 0.5px 0.5px;
+		}
+
+		.page .invoice-info {
+			margin: 20px 20px;
+		}
+
+		.page .invoice-info .row .blue {
+			color: #1d1d4e;
+			font-size: 8px;
+		}
+
+		.page .invoice-info .row div {
+			padding: 0px;
+			color: black;
+			font-size: 11px;
+			line-height: 15px;
+		}
+
+	</style>
+</head>
+
+<body>
+
+
+	<%
+	var linesXpage = 20;
+	// var page = 1;
+	var totalPages = Math.floor(invoice.lines.length / (linesXpage+1)) + 1;
+	let _date = new Date(invoice.FECFAC);
+	let year = _date.getFullYear();
+	let month = _date.getMonth() + 1;
+	let dt = _date.getDate();
+	if (dt < 10) {
+		dt = "0" + dt;
+	}
+	if (month < 10) {
+		month = "0" + month;
+	}
+	var InvoiceDate = dt + "-" + month + "-" + year;
+	for(var p = 0; p < totalPages; p ++){
+		var page = p + 1;%>
+		<div class="page" style="width: 795px;">
+			<% include ./partials/header %>
+				<% include ./partials/lines %>
+					<% include ./partials/footer %>
+		</div>
+		<% } %>
+
+
+
+</body>
+
+</html>

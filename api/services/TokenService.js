@@ -1,5 +1,6 @@
 var jwt = require("jsonwebtoken");
 var moment = require('moment');
+const Data = require("./Data");
 
 module.exports = {
 	decode: function(token) {
@@ -18,17 +19,23 @@ module.exports = {
 		});
 	},
 	create : function(data){
-		return new Promise(function (resolve, reject) {
+		return new Promise( async function (resolve, reject) {
 			let expire = moment().add(30, "days").unix();
 			let token = jwt.sign({ client: data, expire: expire }, sails.config.custom.secret, { expiresIn: "30d" });
 
-			Session.create({ token: token, data: data, expire:expire })
-			.then(function(row) {
+			try {
+				await Data.execute("INSERT INTO session (token, data, expire) VALUES (?,?,?);", [token, data, expire]);
 				return resolve(token);
-			})
-			.catch(function(e) {
-				return reject(e);
-			});
+			} catch (error) {
+				return reject (error)
+			}
+			// Session.create({ token: token, data: data, expire:expire })
+			// .then(function(row) {
+			// 	return resolve(token);
+			// })
+			// .catch(function(e) {
+			// 	return reject(e);
+			// });
 		})
 	}
 }
