@@ -1,0 +1,86 @@
+<div class="header">
+	<% include ./letterhead %>
+		<div class="info-client">
+			<div class="row">
+				<div class="col-2">
+					CÓDIGO
+					<div class="box">
+						<%=order.CLIPCL%>
+					</div>
+				</div>
+				<div class="col-2">
+					FECHA
+					<div class="box">
+						<%=orderDate%>
+					</div>
+				</div>
+				<div class="col-3">
+					AGENTE
+					<div class="box">
+						<%=order.AGEPCL%>
+							<span>-
+								<%=order.NOMAGE%>
+							</span>
+					</div>
+				</div>
+				<div class="col-5">
+					NOMBRE COMERCIAL
+					<div class="box">
+						<span>
+							<%=order.CNOPCL%>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" style="margin-top:3px;">
+				<div class="col-6">
+					RAZÓN SOCIAL
+					<div class="box">
+						<%=order.CNOPCL%>
+					</div>
+				</div>
+				<div class="col-2">
+					NIF/DNI
+					<div class="box">
+						<%=order.CNIPCL%>
+					</div>
+				</div>
+				<div class="col-4">
+					POBLACIÓN
+					<div class="box">
+						<%=order.CPOPCL%>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" style="margin-top:3px;">
+				<div class="col-6">
+					DIRECCIÓN
+					<div class="box">
+						<%=order.CDOPCL%>
+					</div>
+				</div>
+				<div class="col-2">
+					TELÉFONO
+					<div class="box">
+						<%=order.TELPCL%>
+					</div>
+				</div>
+				<div class="col-4">
+					PROVINCIA
+					<div class="box">
+						<%=order.CPRPCL%>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="margin-top:3px;">
+				<div class="col-12">
+					COMENTARIOS
+					<div class="box">
+						<%=order.COMPCL%>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>

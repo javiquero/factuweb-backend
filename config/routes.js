@@ -69,7 +69,8 @@ module.exports.routes = {
 	"get /api/catalog/:CODFAM": "CatalogController.getItemsFamily",
 
 	"get /api/orders/list/:LIMIT": "OrderController.getListOrders",
-	"get /api/order/:YEAR/:TIPPCL/:CODPCL": 	"OrderController.getOrder",
+	"get /api/order/:YEAR/:TIPPCL/:CODPCL": "OrderController.getOrder",
+	"get /api/order/pdf/:YEAR/:TIPPCL/:CODPCL": 	"OrderController.getPdfOrder",
 
 	"get /api/invoices/list/:LIMIT": 	"InvoiceController.getListInvoices",
 	"get /api/invoice/:YEAR/:TIPFAC/:CODFAC": 	"InvoiceController.getInvoice",

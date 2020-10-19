@@ -1,0 +1,74 @@
+<div class="lines">
+	<div class="lines-head">
+		<div class="row">
+			<div class="col" style="font-size:10px; color:gray">
+
+			</div>
+			<div class="col-1 text-center">
+				CÓDIGO
+			</div>
+			<div class="col-1 text-center">
+				CANT.
+			</div>
+			<div class="col-7">
+				DESCRIPCIÓN
+			</div>
+			<div class="col text-center">
+				EAN
+			</div>
+			<div class="col-1 text-center">
+				PRECIO
+			</div>
+		</div>
+	</div>
+	<div class="lines-body">
+		<%
+				var i = 0;
+				for (i = 0; i <= linesXpage-1 && (p * linesXpage) + i < order.lines.length; i++ ){
+				let index = (p * linesXpage) + i;
+				let line = order.lines[index];
+		%>
+			<div class="row <%=( line.TOTLPC==0 && line.CANLPC>0 ) ? 'free' : '' %>">
+				<%if (line.CANLPC==0 ){%>
+					<div class="col-1"></div>
+					<div class="col-11 text-center">
+						<%=line.DESLPC%>
+					</div>
+					<%}else{%>
+						<div class="col-1 text-right" style="font-size:10px; color:gray">
+							<%=line.POSLPC%>
+						</div>
+						<div class="col-1 text-right">
+							<%=line.ARTLPC%>
+						</div>
+						<div class="col-1 text-right">
+							<%=line.CANLPC%>
+						</div>
+						<div class="col-7 text-left">
+							<%=line.DESLPC%>
+								<%if (line.TOTLPC==0 && line.CANLPC>0) {%>
+									<span style="float:right; color: green">REGALO - SIN CARGO</span>
+									<%}%>
+						</div>
+						<div class="col text-center">
+							<span style="color:#404040; font-size:8px">
+								<%=line.EANART %>
+							</span>
+						</div>
+						<div class="col-1 text-right">
+							<% let precio = line.TOTLPC/line.CANLPC; %>
+								<% precio = (precio / 1).toFixed(2).toString(); %>
+									<%=precio!=0?precio.replace(".",","):'' %>
+						</div>
+						<%}%>
+			</div>
+			<% }
+				for (; i < linesXpage+1; i++ ){%>
+				<div class="row blank">
+					<div class="col">
+						&nbsp;
+					</div>
+				</div>
+				<% } %>
+	</div>
+</div>

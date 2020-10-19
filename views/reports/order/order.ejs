@@ -1,0 +1,132 @@
+<%
+	var linesXpage = 35;
+	var totalPages = Math.floor(order.lines.length / linesXpage) + 1;
+
+	let _date = new Date(order.FECPCL);
+	let year = _date.getFullYear();
+	let month = _date.getMonth() + 1;
+	let dt = _date.getDate();
+	if (dt < 10) {
+		dt = "0" + dt;
+	}
+	if (month < 10) {
+		month = "0" + month;
+	}
+	var orderDate = dt + "-" + month + "-" + year;
+
+for(var p = 0; p < totalPages ; p ++){
+		var page = p + 1;%>
+	<div class="page" style="width: 795px;">
+		<% include ./partials/header %>
+			<% include ./partials/lines %>
+				<% include ./partials/footer %>
+	</div>
+	<% } %>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" type="text/css">
+		<style>
+			.page {
+				font-family: 'Helvetica';
+				padding: 25px;
+				text-align: left;
+				background-color: white;
+				font-size: 12px;
+
+			}
+
+			.page .row {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			.page .row div {
+				padding: 0px;
+			}
+
+			.page .letterhead {
+				color: blue;
+				font-size: 10px;
+			}
+
+			.page .letterhead .numorder {
+				text-align: center;
+				width: 100%;
+				position: absolute;
+				color: black;
+				font-size: 14px;
+				margin: 50px;
+			}
+
+			.page .info-client {
+				margin-top: 10px;
+				color: blue;
+				font-size: 12px;
+			}
+
+			.page .info-client .row div.box {
+				border: 1px solid blue;
+				line-height: 23px;
+				height: 23px;
+				margin-right: 10px;
+				margin-top: -4px;
+				color: black;
+				padding: 0 5px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.page .lines {
+				margin-top: 10px;
+				font-size: 11px;
+				padding: 10px;
+			}
+
+			.page .lines .lines-head {
+				color: blue;
+			}
+
+			.page .lines .lines-head .row div {
+				border-top: none;
+				border-bottom: 1px solid blue;
+				padding: 3px;
+			}
+
+			.page .lines .lines-head .row div:first-child {
+				border-bottom: none;
+			}
+
+
+
+
+			.page .lines .lines-body .row div {
+				padding: 3px;
+				border-bottom: 1px solid blue;
+				border-left: 1px solid blue;
+				height: 20px;
+				line-height: 15px;
+			}
+
+			.page .lines .lines-body .row.deferred {
+				background-color: yellow;
+			}
+
+			.page .lines .lines-body .row div:last-child {
+				border-right: 1px solid blue;
+			}
+
+			.page .lines .lines-body .row div:first-child {
+				border-bottom: none;
+				border-left: none;
+
+			}
+
+			.page .lines .lines-body .row.blank div {
+				border: none;
+				height: 20px;
+				line-height: 20px;
+			}
+
+			.page .lines .lines-body .row.free div {
+				color: Gray;
+			}
+
+		</style>
