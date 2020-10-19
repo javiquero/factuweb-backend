@@ -222,12 +222,13 @@ imageController = {
 		let Items = await sails.controllers.catalog._getItemsInFamily(codfam);
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
-				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.CODART]);
+				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.IMGART]);
 				// let images = await Image.find({ "CODART": item.CODART });
 				if (images.length > 0) {
 					let img = images[0];
 					if (fs.existsSync(process.cwd() + "/photos/" + img.MD5 + "." + img.extension)) {
-						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  item.CODART + "." + img.extension );
+						let name = item.CE1ART == "" ? item.CODART :  item.CODART + "_" + item.CE1ART;
+						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined, name  + "." + img.extension );
 					}
 				}
 			}));
@@ -244,7 +245,7 @@ imageController = {
 		let zip = new AdmZip();
 		let filename = "Order_" + year + "_" + tippcl + "_" + codpcl + "_images"
 		if (year == undefined|| tippcl==undefined || codpcl==undefined) return res.notFound();
-		let Items = await Db.find("SELECT * FROM F_LPC WHERE CODLPC=? AND TIPLPC=? AND YEAR=? ORDER BY POSLPC ASC;", [codpcl, tippcl, year]);
+		let Items = await Db.find("SELECT DISTINCT ARTLPC FROM F_LPC WHERE CODLPC=? AND TIPLPC=? AND YEAR=? ORDER BY POSLPC ASC;", [codpcl, tippcl, year]);
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
 				// let images = await Image.find({ "CODART": item.ARTLPC });
@@ -270,7 +271,7 @@ imageController = {
 		let filename = "Invoice_" + year + "_" + tipfac + "_" + codfac + "_images"
 		if (year == undefined || tipfac == undefined || codfac == undefined) return res.notFound();
 
-		let Items = await Db.find("SELECT * FROM F_LFA WHERE CODLFA=? AND TIPLFA=? AND YEAR=? ORDER BY POSLFA ASC;", [codfac, tipfac, year]);
+		let Items = await Db.find("SELECT DISTINCT ARTLFA FROM F_LFA WHERE CODLFA=? AND TIPLFA=? AND YEAR=? ORDER BY POSLFA ASC;", [codfac, tipfac, year]);
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
 				// let images = await Image.find({ "CODART": item.ARTLFA });
@@ -298,12 +299,13 @@ imageController = {
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
 				// let images = await Image.find({ "CODART": item.CODART });
-				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.CODART]);
+				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.IMGART]);
 
 				if (images.length > 0) {
 					let img = images[0];
 					if (fs.existsSync(process.cwd() + "/photos/" + img.MD5 + "." + img.extension)) {
-						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  item.CODART + "." + img.extension );
+						let name = item.CE1ART == "" ? item.CODART :  item.CODART + "_" + item.CE1ART;
+						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  name + "." + img.extension );
 					}
 				}
 			}));
@@ -318,7 +320,7 @@ imageController = {
 		let zip = new AdmZip();
 		let filename = "Exclusivas2R_items"
 
-		let Items = await Db.find("Select CODART, DESART, DIMART, OBSART, IMGART, PESART, EANART, UELART, UPPART,DEWART, DLAART, FAMART, SUWART  FROM F_ART INNER JOIN (SELECT ARTLFA, DESLFA FROM F_FAC INNER JOIN F_LFA ON F_FAC.YEAR=F_LFA.YEAR AND F_FAC.TIPFAC=F_LFA.TIPLFA AND F_FAC.CODFAC=F_LFA.CODLFA WHERE CLIFAC=? GROUP BY ARTLFA) on ARTLFA = CODART AND DESLFA=DESART WHERE  SUWART=1 AND FAMART<>'';", [req.session.cookie.client]);
+		let Items = await Db.find("Select DISTINCT CODART, DESART, DIMART, OBSART, IMGART, PESART, EANART, UELART, UPPART,DEWART, DLAART, FAMART, SUWART  FROM F_ART INNER JOIN (SELECT ARTLFA, DESLFA FROM F_FAC INNER JOIN F_LFA ON F_FAC.YEAR=F_LFA.YEAR AND F_FAC.TIPFAC=F_LFA.TIPLFA AND F_FAC.CODFAC=F_LFA.CODLFA WHERE CLIFAC=? GROUP BY ARTLFA) on ARTLFA = CODART AND DESLFA=DESART WHERE  SUWART=1 AND FAMART<>'';", [req.session.cookie.client]);
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
 				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.CODART]);
@@ -344,16 +346,18 @@ imageController = {
 		let filename = "Exclusivas2R_items"
 
 		let t = `%${text}%`;
-		let Items = await Db.find("SELECT CODART FROM F_ART WHERE (CODART LIKE ? OR DESART LIKE ? OR EANART LIKE ? OR DEWART LIKE ? ) AND SUWART=1 AND FAMART<>'' ORDER BY FAMART,ORDART LIMIT ?;", [t,t,t,t, LIMIT]);
+		let query = "SELECT DISTINCT * FROM (SELECT CODART, DESART, DIMART, OBSART, CODART AS IMGART, PESART, EANART, UELART, UPPART,DEWART, DLAART, FAMART, SUWART, CAST(ORDART As INTEGER) AS ORD, IFNULL(CODCE1, '') as CODCE1, IFNULL(DESCE1, '') as CE1ART FROM F_ART LEFT JOIN F_ARC ON F_ART.CODART = F_ARC.ARTARC LEFT JOIN (SELECT * FROM F_CE1 WHERE CODCE1 NOT IN ( Select CE1IMG from F_IMG) )AS F_CE1 ON F_ARC.CE1ARC=F_CE1.CODCE1 WHERE CODART NOT IN ( Select ARTIMG from F_IMG) AND  (CODART LIKE ? OR DESART LIKE ? OR EANART LIKE ? OR DEWART LIKE ? ) UNION SELECT ARTIMG AS CODART, DESART, DIMART, OBSART, CODIMG AS IMGART, PESART, EANART, UELART, UPPART,DEWART, DLAART, FAMIMG AS FAMART, SUWIMG AS SUWART, ORDIMG AS ORD, CODCE1, DESCE1 as CE1ART FROM F_IMG INNER JOIN F_ART ON ARTIMG=CODART LEFT JOIN F_CE1 ON CE1IMG=CODCE1 WHERE (ARTIMG LIKE ? OR DESART LIKE ? OR EANART LIKE ? OR DEWART LIKE ? )  ) as a WHERE SUWART=1 AND FAMART<>'' ORDER BY FAMART, CAST(ORD As INTEGER) ASC LIMIT ?;";
+		let Items = await Db.find(query, [t,t,t,t,t,t,t,t, LIMIT]);
 
 		if (Items.length > 0) {
 			await Promise.all(Items.map(async item => {
 				// let images = await Image.find({ "CODART": item.CODART });
-				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.CODART]);
+				let images = await Data.find("SELECT * FROM images WHERE CODART=?", [item.IMGART]);
 				if (images.length > 0) {
 					let img = images[0];
 					if (fs.existsSync(process.cwd() + "/photos/" + img.MD5 + "." + img.extension)) {
-						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  item.CODART + "." + img.extension );
+						let name = item.CE1ART == "" ? item.CODART :  item.CODART + "_" + item.CE1ART;
+						zip.addLocalFile(process.cwd() + "/photos/" + img.MD5 + "." + img.extension, undefined,  name + "." + img.extension );
 					}
 				}
 			}));

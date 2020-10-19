@@ -41,12 +41,15 @@ let invoiceController = {
 
 		if (YEAR == undefined|| TIPFAC==undefined || CODFAC==undefined) return res.notFound();
 		if (!req.session.cookie && req.session.cookie.client == undefined) return res.forbidden();
-
-		let invoice = await Db.findOne("SELECT F_FAC.*, NOCCLI, DESFPA, BNOFAC AS BANCLI FROM ((F_FAC INNER JOIN F_FPA ON F_FAC.FOPFAC= F_FPA.CODFPA ) INNER JOIN F_CLI ON F_FAC.CLIFAC=F_CLI.CODCLI )  FROM F_FAC WHERE CLIFAC=? AND YEAR=? AND TIPFAC=? AND CODFAC=?;", [req.session.cookie.client, YEAR, TIPFAC, CODFAC] );
+		let invoice = await Db.findOne("SELECT F_FAC.*, NOCCLI, DESFPA, BNOFAC AS BANCLI FROM ((F_FAC INNER JOIN F_FPA ON F_FAC.FOPFAC= F_FPA.CODFPA ) INNER JOIN F_CLI ON F_FAC.CLIFAC=F_CLI.CODCLI ) WHERE CLIFAC=? AND YEAR=? AND TIPFAC=? AND CODFAC=?;", [req.session.cookie.client, YEAR, TIPFAC, CODFAC] );
 		if (invoice != undefined) {
 			invoice.lines = await Db.find("SELECT * FROM F_LFA WHERE CODLFA=? AND TIPLFA=? AND YEAR=? ORDER BY POSLFA ASC;", [invoice["CODFAC"], invoice["TIPFAC"], invoice["YEAR"]]);
-
-			invoiceController._getBufferPdfInvoice(invoice).then(buffer => {
+			// sails.hooks.views.render("reports/invoice/invoice", { layout: "",  invoice: invoice , baseUrl: req.baseUrl} , function (err, html) {
+			// 	res.set("Content-Type", "text/html; charset=utf-8");
+			// 	return res.send(html);
+			// });
+			// // return res.view("reports/invoice/invoice", { layout: "", invoice: invoice });
+			invoiceController._getBufferPdfInvoice(invoice, req.baseUrl).then(buffer => {
 				res.set("Content-Type", "application/pdf");
 				return res.send(buffer);
 			})
@@ -58,15 +61,15 @@ let invoiceController = {
 			return res.notFound();
 		}
 	},
-	_getBufferPdfInvoice: function(invoice) {
+	_getBufferPdfInvoice: function(invoice, baseUrl) {
 		return new Promise((resolve, reject) => {
 			if (!invoice) reject(new Error("Invalid invoice"));
-			sails.hooks.views.render("reports/invoice/invoice", { layout: "", invoice: invoice }, function(err, html) {
+			sails.hooks.views.render("reports/invoice/invoice", { layout: "", invoice: invoice, baseUrl: baseUrl }, function(err, html) {
 				if (err) {
 					console.log(err);
 					reject(err);
 				}
-				sails.log.debug(invoice.lines.length);
+				// sails.log.debug(invoice.lines.length);
 				let options = {
 					format: "A4",
 					orientation: "portrait"

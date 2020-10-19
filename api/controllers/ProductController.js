@@ -20,7 +20,7 @@ let productController = {
 	_getItemInfo(CODART, session) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let info = await Db.findOne("SELECT * FROM F_ART WHERE CODART=?;", [CODART]);
+				let info = await Db.findOne("SELECT CODART, DESART, DIMART, OBSART, CODART AS IMGART, PESART, EANART, UELART, UPPART, DEWART, DLAART, FAMART, SUWART, '' as CODCE1, '' as CE1ART FROM F_ART WHERE CODART=?;", [CODART]);
 				if (session.cookie.client != undefined) {
 					if (session.cookie.infclient == undefined) session.cookie.infclient = await sails.controllers.client._getInfoClient(session.cookie.client);
 					info.price = await sails.controllers.client._getPriceClient(info['CODART'], session);
@@ -50,7 +50,7 @@ let productController = {
 			try {
 				if (session.cookie.client == undefined) return resolve([]);
 
-				let rowsArt = await Db.find("Select CODART, DESART, DIMART, OBSART, IMGART, PESART, EANART, UELART, UPPART,DEWART, DLAART, FAMART, SUWART  FROM F_ART INNER JOIN (SELECT ARTLFA, DESLFA FROM F_FAC INNER JOIN F_LFA ON F_FAC.YEAR=F_LFA.YEAR AND F_FAC.TIPFAC=F_LFA.TIPLFA AND F_FAC.CODFAC=F_LFA.CODLFA WHERE CLIFAC=? GROUP BY ARTLFA) on ARTLFA = CODART AND DESLFA=DESART WHERE  SUWART=1 AND FAMART<>'' LIMIT ?,? ;", [session.cookie.client, from, limit]);
+				let rowsArt = await Db.find("Select CODART, DESART, DIMART, OBSART, CODART AS IMGART, PESART, EANART, UELART, UPPART, DEWART, DLAART, FAMART, SUWART, '' as CODCE1, '' as CE1ART  FROM F_ART INNER JOIN (SELECT ARTLFA, DESLFA FROM F_FAC INNER JOIN F_LFA ON F_FAC.YEAR=F_LFA.YEAR AND F_FAC.TIPFAC=F_LFA.TIPLFA AND F_FAC.CODFAC=F_LFA.CODLFA WHERE CLIFAC=? GROUP BY ARTLFA) on ARTLFA = CODART AND DESLFA=DESART WHERE SUWART=1 AND FAMART<>'' LIMIT ?,? ;", [session.cookie.client, from, limit]);
 				// console.log(rowsArt.length);
 				if (session.cookie.infclient == undefined) session.cookie.infclient = await sails.controllers.client._getInfoClient(session.cookie.client);
 
