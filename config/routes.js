@@ -81,6 +81,7 @@ module.exports.routes = {
 
 	"get /api/client/addresses": 	"ClientController.getAddresses",
 	"get /api/client/agent": 	"ClientController.getAgentInfo",
+	"post /api/email/send": 	"ClientController.sendEmail",
 
 
     	/***************************************************************************

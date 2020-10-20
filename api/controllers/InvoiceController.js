@@ -1,5 +1,6 @@
 
 const pdf = require("html-pdf");
+
 // const excel = require('exceljs');
 
 
@@ -51,6 +52,8 @@ let invoiceController = {
 			// // return res.view("reports/invoice/invoice", { layout: "", invoice: invoice });
 			invoiceController._getBufferPdfInvoice(invoice, req.baseUrl).then(buffer => {
 				res.set("Content-Type", "application/pdf");
+				// res.set("Content-Disposition:attachment;filename='" + YEAR + "_" + TIPFAC + "_" + CODFAC + ".pdf'");
+				res.set("Content-Disposition", "filename="+ YEAR + "_" + TIPFAC + "_" + CODFAC + ".pdf");
 				return res.send(buffer);
 			})
 			.catch(err => {

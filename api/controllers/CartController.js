@@ -20,13 +20,13 @@ let cartController = {
 			}
 		});
 	},
-	_itemInCart(_cart, codart, type=0) {
+	_itemInCart(_cart, codart, ce1art, type=0) {
 		return new Promise((resolve) => {
 			// for (const [index, element] of _cart.items.entries()) {
 			// 	if (element.CODART == codart && element.type == type) return resolve( index );
 			// }
 			// return resolve( -1 )
-			let found = _cart.items.findIndex(element => (element.CODART == codart && element.type == type));
+			let found = _cart.items.findIndex(element => (element.CODART == codart && element.CE1ART == ce1art && element.type == type));
 			return resolve( found )
 		});
 	},
@@ -47,7 +47,7 @@ let cartController = {
 		if (!item) return res.badRequest();
 		_cart = await cartController._getCart(req.session.cookie.client);
 
-		let foundIndex = await cartController._itemInCart(_cart, item.CODART, item.type || 0);
+		let foundIndex = await cartController._itemInCart(_cart, item.CODART, item.CE1ART,item.type || 0);
 		if ( foundIndex > -1) {
 			if (qty > 0) {
 				// UPDATE ELEMENT
@@ -82,7 +82,7 @@ let cartController = {
 	async delCart(req, res) {
 		if (!req.session.cookie.token) return res.notFound();
 
-		await Cart.destroy({ CODCLI: req.session.cookie.client });
+		await Data.execute("DELETE FROM cart WHERE CODCLI=?;", [req.session.cookie.client]);
 		return res.json(cartController._emptyCart())
 	},
 	editCart(req, res) {

@@ -33,8 +33,6 @@ let orderController = {
 		}
 	},
 
-
-
 	async getPdfOrder(req, res) {
 		let YEAR = req.param("YEAR", undefined);
 		let TIPPCL = req.param("TIPPCL", undefined);
@@ -55,6 +53,7 @@ let orderController = {
 
 			orderController._getBufferPdfOrder(order, req.baseUrl).then(buffer => {
 				res.set("Content-Type", "application/pdf");
+				res.set("Content-Disposition", "filename="+ YEAR + "_" + TIPPCL + "_" + CODPCL + ".pdf");
 				return res.send(buffer);
 			})
 			.catch(err => {

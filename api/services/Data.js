@@ -75,6 +75,36 @@ module.exports = {
 			}
 		});
 	},
+	getSettings(KEY, DefaultValue) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let item = await this.findOne("SELECT * FROM settings WHERE KEY=?", [KEY]);
+				if (item) return resolve(item.VALUE)
+			} catch (error) {
+				sails.log.error("Settings.findOne");
+				sails.log.error(error);
+				return reject(error);
+			}
+			let cfg = sails.config.custom[KEY];
+			if (cfg != undefined && DefaultValue == undefined) DefaultValue = cfg;
+
+			if (DefaultValue != undefined) {
+				try {
+					await this.execute("INSERT INTO settings ('KEY', 'VALUE') VALUES (?,?)", [KEY, DefaultValue]);
+					return resolve(DefaultValue);
+				} catch (error) {
+					sails.log.error("Settings.create");
+					sails.log.error(error);
+					return reject(error);
+				}
+			}
+			return resolve("")
+		});
+
+
+
+
+	}
 
 }
 

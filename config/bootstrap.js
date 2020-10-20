@@ -81,59 +81,36 @@ module.exports.bootstrap = async function () {
 	genThumbs();
 
 	// Configuración
-	let secret = await Data.findOne("SELECT * FROM settings WHERE KEY=?", ['secret']);
-		if (!secret) {
-			secret = sails.config.custom.secret;
-			if (!secret) {
-				require('crypto').randomBytes(48, async function (err, buffer) {
-					secret = buffer.toString('hex');
-					try {
-						await Data.execute("INSERT INTO settings ('KEY', 'VALUE') VALUES (?,?)", ['secret', secret]);
-					} catch (error) {
-						sails.log.error("Settings.create");
-						sails.log.error(error);
-					}
-				});
-			} else {
-				try {
-					await Data.execute("INSERT INTO settings ('KEY', 'VALUE') VALUES (?,?)", ['secret', secret]);
-				} catch (error) {
-					sails.log.error("Settings.create");
-					sails.log.error(error);
-				}
-			}
-		}
+	let DefaultSecret = await new Promise((resolve, reject) => {
+		require('crypto').randomBytes(48, async function (err, buffer) {
 
-		let token = undefined;
-		try {
-			token = await Data.findOne("SELECT * FROM settings WHERE KEY=?", ['token']);
-		} catch (error) {
-			sails.log.error("Settings.findOne");
-			sails.log.error(error);
-		}
-		if (!token) {
-			let num = moment().add(Math.random(30), "days").unix();
-			token = sails.config.custom.token || jwt.sign({ rndnum: num }, secret);
-			try {
-				await Data.execute("INSERT INTO settings ('KEY', 'VALUE') VALUES (?,?)", ['token', token]);
-			} catch (error) {
-				sails.log.error("Settings.create");
-				sails.log.error(error);
-			}
-		}
+			let s = buffer.toString('hex');
+			return resolve(s);
+		});
+	})
 
-		let conf = undefined;
-		try {
-			conf = await Data.find("SELECT * FROM settings;");
-			console.log('--------------------------------------------------------------------------------');
-			await Promise.all(conf.map(item => { sails.config.custom[item.KEY] = item.VALUE; sails.log.debug("CONFIG - " + item.KEY + " - " + item.VALUE) }))
-			console.log('--------------------------------------------------------------------------------');
-		} catch (error) {
-			sails.log.error("Settings.find");
-			sails.log.error(error);
-		}
+	let num = moment().add(Math.random(30), "days").unix();
+	let secret = await Data.getSettings('secret', DefaultSecret);
+	await Data.getSettings('token', jwt.sign({ rndnum: num }, secret))  ;
 
+	await Data.getSettings('email.host', 'smtp.host-email.com');
+	await Data.getSettings('email.port', '587');
+	await Data.getSettings('email.secure', 'false'); // true for 465, false for other ports
+	await Data.getSettings('email.auth.user', 'testAccount.user');
+	await Data.getSettings('email.auth.pass', 'testAccount.pass');
+	await Data.getSettings('email.bcc', 'factuWeb <foo.example.com>');
+	await Data.getSettings('email.from', 'foo.example.com');
 
+	let conf = undefined;
+	try {
+		conf = await Data.find("SELECT * FROM settings;");
+		console.log('--------------------------------------------------------------------------------');
+		await Promise.all(conf.map(item => { sails.config.custom[item.KEY] = item.VALUE; sails.log.debug("CONFIG - " + item.KEY + " - " + item.VALUE) }))
+		console.log('--------------------------------------------------------------------------------');
+	} catch (error) {
+		sails.log.error("Settings.find");
+		sails.log.error(error);
+	}
 
 	// sails.log.debug(process.argv);
 	if (process.argv.includes('restore'))
