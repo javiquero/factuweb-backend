@@ -16,7 +16,6 @@ module.exports.policies = {
   * (`true` allows public access)                                            *
   *                                                                          *
   ***************************************************************************/
-
 	'*': 'auth',
 	'auth/login': 'debug',
   	'image/getImage': 'debug',
@@ -25,5 +24,8 @@ module.exports.policies = {
 	'image/getDownloadPhoto': 'debug',
 	'image/getDownloadSection': 'debug',
 	'image/getDownloadOrder': 'debug',
+	'catalog/getCatalog': 'debug',
+	'catalog/getItemsFamily': 'debug',
+	'product/getSearchResults': 'debug',
 
 };

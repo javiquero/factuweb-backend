@@ -1,3 +1,4 @@
+const Db = require("../services/Db");
 
 
 let productController = {
@@ -64,25 +65,24 @@ let productController = {
 			}
 		});
 	},
-
-
-
-
-
-	// async getCountPurchasedItems(req, res) {
-
-	// 	try {
-	// 		let resp = await productController._getCountPurchasedItems(req.session);
-	// 		return res.json(resp)
-	// 	} catch (error) {
-	// 		sails.log.error(error);
-	// 		return res.serverError(error);
-	// 	}
-	// },
 	async getSearchResults(req, res) {
 		let q = req.param("q", undefined);
-		if (!q) return res.json({});
+		if (!q) return res.json([]);
 
+		let ip = req.headers['x-real-ip'] || req.ip;
+		let cli = "invitado - " + ip;
+		if (req.session && req.session.cookie.client != undefined) {
+			cli = req.session.cookie.client;
+		}
+
+		try {
+			let today = new Date();
+			let date =  today.getDate()+"/"+ (today.getMonth() + 1) + "/" + today.getFullYear();
+			let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+			Data.execute("INSERT INTO searches ('TEXT', 'CODCLI', 'FECHA', 'HORA') VALUES (?,?,?,?);", [q, cli, date, time]);
+		} catch (error) {
+			sails.log.error(error);
+		}
 		try {
 			let resp = await sails.controllers.catalog._getItemsInSearch(q, req.session);
 			return res.json(resp)
@@ -90,10 +90,9 @@ let productController = {
 			sails.log.error(error);
 			return res.serverError(error);
 		}
-
 	},
-	async getPurchasedItems(req, res) {
 
+	async getPurchasedItems(req, res) {
 		try {
 			let resp = await productController._getPurchasedItems(req.session);
 			return res.json(resp)

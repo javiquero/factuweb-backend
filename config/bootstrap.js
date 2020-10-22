@@ -15,7 +15,6 @@ const Data = require('../api/services/Data');
 
 module.exports.bootstrap = async function () {
 
-
 	if (! await Data.existsTable("cart"))
 		await Data.execute('CREATE TABLE "cart" ( "CODCLI" TEXT, "items" TEXT, PRIMARY KEY ("CODCLI"), CONSTRAINT "ipx_cart" UNIQUE ("CODCLI" ASC) );');
 	if (! await Data.existsTable("images"))
@@ -24,6 +23,8 @@ module.exports.bootstrap = async function () {
 		await Data.execute('CREATE TABLE "session" ( "token" TEXT, "data" TEXT, "expire" INTEGER, PRIMARY KEY ("token"), CONSTRAINT "ipx_session" UNIQUE ("token" ASC) );');
 	if (! await Data.existsTable("settings"))
 		await Data.execute('CREATE TABLE "settings" ( "KEY" TEXT, "VALUE" TEXT, PRIMARY KEY ("KEY"), CONSTRAINT "ipx_settings" UNIQUE ("KEY" ASC) );');
+		if (! await Data.existsTable("searches"))
+		await Data.execute('CREATE TABLE "searches" ("ID" INTEGER PRIMARY KEY AUTOINCREMENT, "TEXT" TEXT, "CODCLI" TEXT,"FECHA" TEXT,"HORA" TEXT, CONSTRAINT "ipx_searches" UNIQUE ("ID" ASC) );');
 
 	// if (sails.config.models.migrate == 'drop') {
 	// 	sails.config.models.migrate = "safe";
@@ -73,7 +74,6 @@ module.exports.bootstrap = async function () {
 					} catch (error) {
 						sails.log.error(error);
 					}
-
 				}
 			};
 		}

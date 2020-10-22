@@ -15,9 +15,13 @@ module.exports.custom = {
         * Any other custom config this Sails app should use during development.    *
         *                                                                          *
         ***************************************************************************/
-    tables: [{
+	tables: [{
+		name:"F_EMP",
+		cols: ['CODEMP', 'NIFEMP', 'DENEMP', 'NOMEMP', 'NUMEMP', 'ESCEMP', 'PISEMP', 'POBEMP', 'MUNEMP', 'CPOEMP', 'PROEMP', 'TELEMP', 'FAXEMP', 'CLAEMP', 'REGEMP', 'TOMEMP', 'FOLEMP', 'HOJEMP', 'EMAEMP', 'TVCEMP'],
+		index:["CODEMP"]
+	}, {
 		name: "F_ART",
-		cols: ["CODART", "EQUART", "FAMART", "DESART", "TIVART", "UELART", "UPPART", "DIMART", "OBSART", "DLAART", "IPUART", "CANART", "IMGART", "SUWART", "DSCART", "DEWART", "IMWART", "PESART", "UMEART", "DE1ART", "DE2ART", "DE3ART", "DFIART", "EANART", "ORDART"],
+		cols: ["CODART", "EQUART", "FAMART", "DESART", "TIVART", "UELART", "UPPART", "DIMART", "OBSART", "DLAART", "IPUART", "CANART", "IMGART", "SUWART", "DSCART", "DEWART", "IMWART", "PESART", "UMEART", "DE1ART", "DE2ART", "DE3ART", "DFIART", "EANART", "CAWCLI", "ORDART"],
 		index: ["CODART"]
 	}, {
 		name: "F_FPA",

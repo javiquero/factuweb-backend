@@ -34,9 +34,23 @@ let cartController = {
 		if (!req.session.cookie.token) return res.notFound();
 
 		_cart = await cartController._getCart(req.session.cookie.client);
+		_cart = await cartController._testCart(_cart);
 		return res.json(_cart);
 	},
-
+	async _testCart(_cart) {
+		return new Promise(async (resolve, reject) => {
+			let cart = { items: [], outOfCart: [] };
+			await Promise.all(_cart.items.map(async item => {
+				let info = await Db.findOne("SELECT CODART, DESART, DIMART, OBSART, CODART AS IMGART, PESART, EANART, UELART, UPPART, DEWART, DLAART, FAMART, SUWART, '' as CODCE1, '' as CE1ART FROM F_ART WHERE CODART=? AND SUWART=1;", [item.CODART]);
+				if (info != undefined) {
+					cart.items.push(item);
+				} else {
+					cart.outOfCart.push(item);
+				};
+			}))
+			return resolve(cart);
+		});
+	},
 	async setCart(req, res) {
 		if (!req.session.cookie.token) return res.notFound();
 
