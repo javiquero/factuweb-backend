@@ -17,7 +17,7 @@ module.exports.custom = {
         ***************************************************************************/
 	tables: [{
 		name:"F_EMP",
-		cols: ['CODEMP', 'NIFEMP', 'DENEMP', 'NOMEMP', 'NUMEMP', 'ESCEMP', 'PISEMP', 'POBEMP', 'MUNEMP', 'CPOEMP', 'PROEMP', 'TELEMP', 'FAXEMP', 'CLAEMP', 'REGEMP', 'TOMEMP', 'FOLEMP', 'HOJEMP', 'EMAEMP', 'TVCEMP'],
+		cols: ['CODEMP', 'NIFEMP', 'DOMEMP', 'DENEMP', 'NOMEMP', 'NUMEMP', 'ESCEMP', 'PISEMP', 'POBEMP', 'MUNEMP', 'CPOEMP', 'PROEMP', 'TELEMP', 'FAXEMP', 'CLAEMP', 'REGEMP', 'TOMEMP', 'FOLEMP', 'HOJEMP', 'EMAEMP', 'TVCEMP'],
 		index:["CODEMP"]
 	}, {
 		name: "F_ART",

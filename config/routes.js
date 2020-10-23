@@ -64,6 +64,7 @@ module.exports.routes = {
     "get /api/client/agent": "ClientController.getAgentInfo",
     "post /api/email/send": "ClientController.sendEmail",
 
+	"get /api/info": "CompanyController.getInfo",
 
     /***************************************************************************
         *                                                                          *

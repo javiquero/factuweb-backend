@@ -27,5 +27,5 @@ module.exports.policies = {
 	'catalog/getCatalog': 'debug',
 	'catalog/getItemsFamily': 'debug',
 	'product/getSearchResults': 'debug',
-
+	'company/getInfo': 'debug',
 };
