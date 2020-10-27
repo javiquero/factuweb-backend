@@ -85,7 +85,7 @@ let catalogController = {
 			try {
 				let rowsSec = await Db.find("SELECT CODSEC, DESSEC FROM F_SEC WHERE SUWSEC=1 ORDER BY ORDSEC ASC;");
 				await Promise.all(rowsSec.map(async (rowSec) => {
-					let rowsFam = await Db.find("SELECT CODFAM, DESFAM FROM F_FAM WHERE SUWFAM=1 AND SECFAM=? ORDER BY ORDFAM ASC;", [ rowSec.CODSEC ]);
+					let rowsFam = await Db.find("SELECT CODFAM, DESFAM, IMAFAM FROM F_FAM WHERE SUWFAM=1 AND SECFAM=? ORDER BY ORDFAM ASC;", [ rowSec.CODSEC ]);
 					rowSec.fam = rowsFam;
 				}));
 				return resolve(rowsSec);

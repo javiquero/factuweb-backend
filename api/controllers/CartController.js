@@ -32,9 +32,9 @@ let cartController = {
 	},
 	getCart: async (req, res)=> {
 		if (!req.session.cookie.token) return res.notFound();
-
 		_cart = await cartController._getCart(req.session.cookie.client);
 		_cart = await cartController._testCart(_cart);
+		await Data.execute("REPLACE INTO cart (CODCLI, items) VALUES (?,?)", [req.session.cookie.client, JSON.stringify(_cart.items)]);
 		return res.json(_cart);
 	},
 	async _testCart(_cart) {
@@ -89,7 +89,6 @@ let cartController = {
 		// await Data.execute("INSERT INTO cart (CODCLI, items) VALUES (?,?)", [req.session.cookie.client, JSON.stringify(_cart.items)])
 
 		await Data.execute("REPLACE INTO cart (CODCLI, items) VALUES (?,?)", [req.session.cookie.client, JSON.stringify(_cart.items)])
-		// await Cart.create({ CODCLI: req.session.cookie.client, items: _cart.items });
 		return res.json(_cart);
 	},
 

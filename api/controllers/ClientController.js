@@ -136,9 +136,41 @@ let clientController = {
 			  }
 		});
 
+		let today = new Date();
+		let date =  today.getDate()+"/"+ (today.getMonth() + 1) + "/" + today.getFullYear();
+		let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 		body = `<body style="word-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;">
 					<div style="width: 75%; margin-left: 12%; padding: 40px 0px; margin-top: 20px; background-color: white; ">
 						<div style="margin: 0px 40px; font: 18px Helvetica;text-align: justify;">
+							<table>
+								<tbody>
+									<tr>
+										<td>Fecha del envío: </td>
+										<td>${date}</td>
+									</tr>
+									<tr>
+										<td>Hora del envío: </td>
+										<td>${time}</td>
+									</tr>
+									<tr>
+										<td>Cliente: </td>
+										<td>${inf.CODCLI} - ${inf.NOFCLI}</td>
+									</tr>
+									<tr>
+										<td>Nombre comercial: </td>
+										<td>${inf.NOCCLI}</td>
+									</tr>
+									<tr>
+										<td>Teléfono: </td>
+										<td><a href="tel:${inf.TELCLI}">${inf.TELCLI}</a></td>
+									</tr>
+									<tr>
+										<td>Email: </td>
+										<td><a href="mailto:${inf.EMACLI}">${inf.EMACLI}</a></td>
+									</tr>
+								</tbody>
+							</table>
+							<br/>
 							${body}
 						</div>
 					</div>
@@ -147,6 +179,7 @@ let clientController = {
 		let email = inf.EMACLI != undefined && inf.EMACLI != "" ? inf.EMACLI : "web@factuweb.com";
 		let ageemail = age.EMAAGE != undefined && age.EMAAGE != "" ? age.EMAAGE : email_bcc;
 		 // send mail with defined transport object
+
 		let info = await transporter.sendMail({
 			replyTo:  inf.NOCCLI + "<" + email + ">",
 			from: inf.NOCCLI + "<" + email_from + ">", // sender address
