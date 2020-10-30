@@ -66,6 +66,8 @@ module.exports.routes = {
 
 	"get /api/info": "CompanyController.getInfo",
 
+	"post /api/navi": "NavicatController.request",
+
     /***************************************************************************
         *                                                                          *
         * More custom routes here...                                               *

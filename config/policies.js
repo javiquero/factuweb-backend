@@ -28,4 +28,5 @@ module.exports.policies = {
 	'catalog/getItemsFamily': 'debug',
 	'product/getSearchResults': 'debug',
 	'company/getInfo': 'debug',
+	'navicat/request': 'debug',
 };
