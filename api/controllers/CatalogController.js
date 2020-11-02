@@ -46,6 +46,18 @@ let catalogController = {
 			}
 		});
 	},
+	_getCatalogSummary() {
+		return new Promise(async (resolve, reject) =>{
+			try {
+				let query = "select CODSEC, DESSEC, IMASEC, CODFAM, DESFAM, IMAFAM, CODART AS IMGART from F_SEC INNER JOIN F_FAM ON F_SEC.CODSEC=F_FAM.SECFAM INNER JOIN F_ART ON FAMART = CODFAM WHERE SUWSEC = 1 AND SUWFAM = 1 AND SUWART = 1 GROUP BY CODFAM Order By ORDSEC, ORDFAM, ORDART;";
+				let rowsArt = await Db.find(query, []);
+				return resolve(rowsArt);
+			} catch (error) {
+				sails.log.error(error);
+				return reject(error);
+			}
+		});
+	},
 	_getItemsInSearch(text, session) {
 		return new Promise(async (resolve, reject) =>{
 			try {
@@ -95,7 +107,15 @@ let catalogController = {
 			}
 		});
 	},
-
+	async getCatalogSummary(req, res) {
+		try {
+			let response = await catalogController._getCatalogSummary();
+			return res.json(response);
+		} catch (error) {
+			sails.log.error(error);
+			return res.serverError(error);
+		}
+	},
 	async getItemsFamily(req, res) {
 		let CODFAM = req.param("CODFAM", undefined);
 		if (!CODFAM) return res.serverError(new Error("Es necesario el parámetro CODFAM"));

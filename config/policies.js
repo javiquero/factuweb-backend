@@ -26,6 +26,7 @@ module.exports.policies = {
 	'image/getDownloadOrder': 'debug',
 	'catalog/getCatalog': 'debug',
 	'catalog/getItemsFamily': 'debug',
+	'catalog/getCatalogSummary': 'debug',
 	'product/getSearchResults': 'debug',
 	'company/getInfo': 'debug',
 	'navicat/request': 'debug',

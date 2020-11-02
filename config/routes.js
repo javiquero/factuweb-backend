@@ -47,6 +47,7 @@ module.exports.routes = {
     "post /api/cart/del": "CartController.delCart",
 
     "get /api/catalog": "CatalogController.getCatalog",
+    "get /api/summary/catalog": "CatalogController.getCatalogSummary",
     "get /api/catalog/:CODFAM": "CatalogController.getItemsFamily",
 
     "get /api/orders/list/:LIMIT": "OrderController.getListOrders",
