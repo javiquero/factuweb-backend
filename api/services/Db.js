@@ -52,7 +52,7 @@ module.exports = {
 				return resolve();
 			} catch (error) {
 				db.close();
-				sails.log.error(table,condition, error);
+				sails.log.error(query, params, error);
 				return reject(error)
 			}
 		});

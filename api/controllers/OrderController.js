@@ -1,5 +1,6 @@
 
 const pdf = require("html-pdf");
+const Data = require("../services/Data");
 
 let orderController = {
 	async getListOrders(req, res) {
@@ -32,7 +33,78 @@ let orderController = {
 			return res.notFound();
 		}
 	},
+	async getPreOrder(req, res) {
+		let ID = req.param("ID", undefined);
+		if (req.session.cookie.token != sails.config.custom.token)  return res.notFound();
+		let order = await Data.findOne("SELECT * FROM orders WHERE ID=" + ID + ";");
+		if (!order)  return res.notFound();
+		let cli = await sails.controllers.client._getInfoClient(order.CODCLI);
+		if (!cli)  return res.notFound();
+		let age = await sails.controllers.client._getAgentClient(cli.AGECLI);
+		let nomage = '';
+		if (age) nomage = age.NOMAGE;
 
+		let o = {
+			TIPPCL: '',
+			CODPCL: order.ID,
+			FECPCL: order.FECHA,
+			CLIPCL: order.CODCLI,
+			AGEPCL: cli.AGECLI,
+			NOMAGE: nomage,
+			CNOPCL: cli.NOCCLI,
+			CNIPCL:cli.NIFCLI,
+			CPOPCL:cli.POBCLI,
+			CDOPCL:cli.DOMCLI,
+			TELPCL:cli.TELCLI,
+			CPRPCL:cli.PROCLI,
+			COMPCL: order.COMENTARIOS,
+			lines:[]
+		};
+		let lines = JSON.parse(order.DATA);
+		for (let i = 0; i < lines.length; i++) {
+			let line = {
+				TOTLPC: lines[i].price.price*lines[i].qty,
+				CANLPC: lines[i].qty,
+				DESLPC: lines[i].DESART,
+				POSLPC: i+1,
+				ARTLPC: lines[i].CODART,
+				EANART: lines[i].EANART
+			}
+			o.lines.push(line);
+		}
+		orderController._getBufferPdfOrder(o, req.baseUrl).then(buffer => {
+			res.set("Content-Type", "application/pdf");
+			res.set("Content-Disposition", "filename=Order_" + ID + ".pdf");
+			return res.send(buffer);
+		})
+		.catch(err => {
+			sails.log.error(err);
+			return res.badRequest(err.message);
+		});
+
+	},
+	async getOrders(req, res) {
+		if (req.session.cookie.token == sails.config.custom.token) {
+			let orders = await Data.find("SELECT * FROM orders WHERE STATUS=1;");
+			await Promise.all(orders.map(async (order) => {
+				order.DATA = JSON.parse(order.DATA);
+				// await Promise.all(order.DATA.map(async (line) => {
+				// 	line.dto = line.price.dto;
+				// 	line.clientPrice = line.price.clientPrice;
+				// 	line.price = line.price.price;
+				// }));
+			}));
+			res.json(orders);
+		} else {
+			return res.forbidden();
+		}
+	},
+	async setOrderDownloaded(req, res) {
+		let ID = req.param("ID", undefined);
+		if (req.session.cookie.token != sails.config.custom.token) return res.notFound();
+		await Data.execute("UPDATE FROM orders SET STATUS=2 WHERE ID=" + ID + ";");
+		res.ok();
+	},
 	async getPdfOrder(req, res) {
 		let YEAR = req.param("YEAR", undefined);
 		let TIPPCL = req.param("TIPPCL", undefined);

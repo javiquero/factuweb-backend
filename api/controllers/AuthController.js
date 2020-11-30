@@ -19,8 +19,9 @@ module.exports = {
             return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
 
 			c = await Db.findOne("SELECT * FROM F_CLI WHERE CODCLI="+client+";")
-            if (!c) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
-            if (c["NIFCLI"].replace(/[^A-Za-z0-9\s]+/, '').toLowerCase() != nif.replace(/[^A-Za-z0-9\s]+/, '').toLowerCase()) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
+	   if (!c) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
+
+	   if (c["NIFCLI"].toLowerCase().replace(/[^a-z0-9\s]/gi, '') != nif.toLowerCase().replace(/[^a-z0-9\s]/gi, '')) return res.status(401).send("Código de cliente y nif son obligatorios ó no son válidos");
 
             TokenService.create(c.CODCLI).then(token => {
                 return res.json({

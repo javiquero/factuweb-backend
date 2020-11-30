@@ -44,7 +44,8 @@ module.exports.routes = {
 
     "get /api/cart": "CartController.getCart",
     "post /api/cart/set": "CartController.setCart",
-    "post /api/cart/del": "CartController.delCart",
+	"post /api/cart/del": "CartController.delCart",
+	"post /api/cart/finalize" : "CartController.finalize",
 
     "get /api/catalog": "CatalogController.getCatalog",
     "get /api/summary/catalog": "CatalogController.getCatalogSummary",
@@ -52,7 +53,10 @@ module.exports.routes = {
 
     "get /api/orders/list/:LIMIT": "OrderController.getListOrders",
     "get /api/order/:YEAR/:TIPPCL/:CODPCL": "OrderController.getOrder",
-    "get /api/order/pdf/:YEAR/:TIPPCL/:CODPCL": "OrderController.getPdfOrder",
+	"get /api/order/pdf/:YEAR/:TIPPCL/:CODPCL": "OrderController.getPdfOrder",
+	"get /api/getorders" : "OrderController.getOrders",
+	"get /api/order/:ID": "OrderController.getPreOrder",
+	"get /api/order/downloaded/:ID" : "OrderController.setOrderDownloaded",
 
     "get /api/invoices/list/:LIMIT": "InvoiceController.getListInvoices",
     "get /api/invoice/:YEAR/:TIPFAC/:CODFAC": "InvoiceController.getInvoice",

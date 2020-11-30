@@ -38,6 +38,7 @@ module.exports = async function(req, res, next) {
 			})
 		}
 	} else {
+		// sails.log.debug("(" + req.method + " " + req.protocol + ") " + req.url + " - " + ip);
 		return next();
 	}
 

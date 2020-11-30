@@ -24,7 +24,7 @@ imageController = {
 					}
 					sails.log.debug("Image " + file + " has been removed.");
 					//file removed
-				  })
+				})
 			}
 		}
 	},
@@ -36,22 +36,20 @@ imageController = {
 			let extension = md5.split('.').pop();
 			let MD5 = md5.split('.')[0];
 			let images = await Data.find("SELECT * FROM images WHERE CODART=?", [codart]);// Image.find({ "CODART": codart  });
-			if (images.length > 1) {
+			if (images.length == 1) {
+				if (images[0].MD5 != MD5)
+					await Data.execute("UPDATE images SET MD5=? WHERE CODART=?;", [MD5, codart]);
+				return res.ok();
+			}else if (images.length > 1) {
 				await Data.execute("DELETE from images WHERE CODART=?;", [codart]);
-				await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, MD5, extension])
-				// await Image.destroy({ "CODART": codart });
-				// await Image.create({ "CODART": codart, "MD5": MD5, "extension": extension })
+				await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, MD5, extension]);
 				return res.ok();
 			} else if (images.length < 1) {
-				await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, MD5, extension])
-				// await Image.create({ "CODART": codart, "MD5": MD5, "extension": extension })
-				return res.ok();
-			} else {
+				await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, MD5, extension]);
 				return res.ok();
 			}
 		} else {
 			await Data.execute("DELETE from images WHERE CODART=?;", [codart]);
-			// await Image.destroy({ "CODART": codart });
 			return res.json({});
 		}
 	},
@@ -66,41 +64,32 @@ imageController = {
 
 		try {
 			if (fs.existsSync(process.cwd()+"/photos/" + md5 + "." + extension)) {
-				//  sails.log.debug("File exists!");
-
 				let result = await Data.find("SELECT * FROM images WHERE CODART=?", [codart]);
-				// Image.find({ "CODART": codart }).then(async result => {
 				if (result && result.length > 1) {
 					await Data.execute("DELETE from images WHERE CODART=?;", [codart]);
-						// await Image.destroy({ "CODART": codart });
-						await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, md5, extension])
-						// await Image.create({ "CODART": codart, "MD5": md5, "extension": extension });
-					}
-				if (!result || result.length < 1) {
-					await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, md5, extension])
-						// await Image.create({"CODART": codart, "MD5": md5, "extension": extension})
-					}
-				// })
+					await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, md5, extension]);
+				}
+				if (!result || result.length < 1)
+					await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, md5, extension]);
+
+				if (result.length == 1)
+					if (result[0].MD5 != md5)
+						await Data.execute("UPDATE images SET MD5=? WHERE CODART=?;", [md5, codart]);
+
 				return res.ok();
 			} else {
-				// sails.log.debug("NOT File exists! " + photosPath + "/" + md5 + "." + extension);
 				req.file('file').upload({
 					dirname: photosPath,
 					saveAs: md5 + "." + extension
 				}, async function (err, uploadedFiles) {
-						if (err) return res.serverError(err);
-
+					if (err) return res.serverError(err);
 					await Promise.all([imageController._generateThumb(md5, extension, 150), imageController._generateThumb(md5, extension, 1024)]);
-
 					await Data.execute("DELETE from images WHERE CODART=?;", [codart]);
-					// await Image.destroy({ "CODART": codart });
 					await Data.execute("INSERT INTO images (CODART, MD5, extension) VALUES (?,?,?);", [codart, md5, extension])
-					// await Image.create({"CODART": codart, "MD5": md5, "extension": extension})
 					return res.json({
 						message: uploadedFiles.length + ' file(s) uploaded successfully!'
 					});
 				});
-
 			}
 		  } catch(err) {
 			sails.log.error(err)

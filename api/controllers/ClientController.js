@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const htmlToText = require("html-to-text");
+const { _sendEmailOrder } = require('./CartController');
 
 let clientController = {
 	_config: {
@@ -106,6 +107,65 @@ let clientController = {
 
 		});
 	},
+
+	async formatEmail(body, infocli) {
+		return new Promise((resolve, reject) =>{
+			let today = new Date();
+			let date =  today.getDate()+"/"+ (today.getMonth() + 1) + "/" + today.getFullYear();
+			let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+			return resolve(`<body style="word-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;"><div style="width: 75%; margin-left: 12%; padding: 40px 0px; margin-top: 20px; background-color: white; "><div style="margin: 0px 40px; font: 18px Helvetica;text-align: justify;"><table><tbody><tr>
+<td>Fecha del envío: </td><td>${date}</td></tr><tr><td>Hora del envío: </td><td>${time}</td></tr><tr><td>Cliente: </td><td>${infocli.CODCLI} - ${infocli.NOFCLI}</td></tr><tr><td>Nombre comercial: </td><td>${infocli.NOCCLI}</td></tr><tr><td>Teléfono: </td><td><a href="tel:${infocli.TELCLI}">${infocli.TELCLI}</a></td></tr><tr><td>Email: </td>
+<td><a href="mailto:${infocli.EMACLI}">${infocli.EMACLI}</a></td></tr></tbody></table><br/>${body}</div></div></body>`);
+		});
+	},
+
+	_sendEmail(body, from, to, subject) {
+		return new Promise(async (resolve, reject) =>{
+			let email_from = await Data.getSettings('email.from');
+			let email_host = await Data.getSettings('email.host');
+			let email_port = await Data.getSettings('email.port');
+			let email_secure = await Data.getSettings('email.secure'); // true for 465, false for other ports
+			let email_auth_user = await Data.getSettings('email.auth.user');
+			let email_auth_pass = await Data.getSettings('email.auth.pass');
+			let email_bcc = await Data.getSettings('email.bcc');
+			let transporter = nodemailer.createTransport({
+				host: email_host,
+				port: email_port,
+				secure: email_secure.toLowerCase()=="true"?true:false, //TLS
+				auth: {
+				user: email_auth_user,
+				pass: email_auth_pass,
+				},
+				// requireTLS: true,
+				tls: {
+					rejectUnauthorized: false
+				}
+			});
+			if (from == undefined) from = email_from;
+			if (to == undefined) to = email_from;
+			if (email_bcc == to) email_bcc = undefined;
+
+			try {
+				let info =  await transporter.sendMail({
+					replyTo: from,
+					from: from, // sender address
+					to: to, // list of receivers
+					bcc: email_bcc,
+					subject: subject, // Subject line
+					text: htmlToText.fromString(body, { wordwrap: 130 }), // plain text body
+					html: body, // html body
+				});
+				sails.log.debug(info);
+				return resolve(info);
+			} catch (error) {
+				sails.log.error(error);
+				return reject(error);
+			}
+		});
+	},
+
+
+
 	async sendEmail(req, res) {
 		if (!req.session.cookie && req.session.cookie.client == undefined) return res.forbidden();
 
@@ -115,81 +175,17 @@ let clientController = {
 		let inf = await clientController._getInfoClient(req.session.cookie.client);
 		let age = await clientController._getAgentClient(inf.AGECLI);
 
-		let email_from = await Data.getSettings('email.from');
-		let email_host = await Data.getSettings('email.host');
-		let email_port = await Data.getSettings('email.port');
-		let email_secure = await Data.getSettings('email.secure'); // true for 465, false for other ports
-		let email_auth_user = await Data.getSettings('email.auth.user');
-		let email_auth_pass = await Data.getSettings('email.auth.pass');
-		let email_bcc = await Data.getSettings('email.bcc');
-		let transporter = nodemailer.createTransport({
-			host: email_host,
-			port: email_port,
-			secure: email_secure.toLowerCase()=="true"?true:false, //TLS
-			auth: {
-			  user: email_auth_user,
-			  pass: email_auth_pass,
-			},
-			// requireTLS: true,
-			tls: {
-				rejectUnauthorized: false
-			  }
-		});
-
-		let today = new Date();
-		let date =  today.getDate()+"/"+ (today.getMonth() + 1) + "/" + today.getFullYear();
-		let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-		body = `<body style="word-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;">
-					<div style="width: 75%; margin-left: 12%; padding: 40px 0px; margin-top: 20px; background-color: white; ">
-						<div style="margin: 0px 40px; font: 18px Helvetica;text-align: justify;">
-							<table>
-								<tbody>
-									<tr>
-										<td>Fecha del envío: </td>
-										<td>${date}</td>
-									</tr>
-									<tr>
-										<td>Hora del envío: </td>
-										<td>${time}</td>
-									</tr>
-									<tr>
-										<td>Cliente: </td>
-										<td>${inf.CODCLI} - ${inf.NOFCLI}</td>
-									</tr>
-									<tr>
-										<td>Nombre comercial: </td>
-										<td>${inf.NOCCLI}</td>
-									</tr>
-									<tr>
-										<td>Teléfono: </td>
-										<td><a href="tel:${inf.TELCLI}">${inf.TELCLI}</a></td>
-									</tr>
-									<tr>
-										<td>Email: </td>
-										<td><a href="mailto:${inf.EMACLI}">${inf.EMACLI}</a></td>
-									</tr>
-								</tbody>
-							</table>
-							<br/>
-							${body}
-						</div>
-					</div>
-				</body>`;
+		body = clientController.formatEmail(body, inf);
 
 		let email = inf.EMACLI != undefined && inf.EMACLI != "" ? inf.EMACLI : "web@factuweb.com";
 		let ageemail = age.EMAAGE != undefined && age.EMAAGE != "" ? age.EMAAGE : email_bcc;
-		 // send mail with defined transport object
-
-		let info = await transporter.sendMail({
-			replyTo:  inf.NOCCLI + "<" + email + ">",
-			from: inf.NOCCLI + "<" + email_from + ">", // sender address
-			to: age.NOMAGE + "<" + ageemail + ">", // list of receivers
-			bcc: email_bcc,
-			subject: "🔔 Mensaje desde la web: " + subject, // Subject line
-			text: htmlToText.fromString(body, { wordwrap: 130 }), // plain text body
-			html: body, // html body
-		});
-		return res.ok();
+		try {
+			let smail = await clientController._sendEmail(body, inf.NOCCLI + "<" + email + ">", age.NOMAGE + "<" + ageemail + ">", "🔔 Mensaje desde la web: " + subject);
+			return res.ok();
+		} catch (error) {
+			sails.log.error(error)
+			return res.serverError(error);
+		}
 	},
 	async getAddresses(req, res) {
 		if (!req.session.cookie && req.session.cookie.client == undefined) return res.forbidden();

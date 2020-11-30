@@ -65,9 +65,10 @@ module.exports = {
 			let db = undefined;
 			try {
 				db = await this.connect(Database.OPEN_READWRITE);
-				await db.run(query, params);
+				let r = await db.run(query, params);
+				let insertid = r.lastID;
 				db.close();
-				return resolve();
+				return resolve(insertid);
 			} catch (error) {
 				db.close();
 				sails.log.error(query,params, error);

@@ -5,7 +5,7 @@
 		</div>
 		<div class="col-4 text-right">
 			<div class="numorder">
-				Pedido: <%=order.TIPPCL%>-<%=order.CODPCL%>
+				Pedido: <%=order.TIPPCL%><%=order.TIPPCL!=""?"-":""%><%=order.CODPCL%>
 			</div>
 		</div>
 	</div>
